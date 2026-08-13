@@ -1,0 +1,25 @@
+services:
+  vcl:
+    # Use the released image by default. To build locally instead, run:
+    #   docker compose up -d --build
+    image: ghcr.io/cheminfo/vcl:latest
+    build: .
+    env_file: .env
+    ports:
+      - '${PORT:-10811}:80'
+    init: true
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    mem_limit: 512m
+    cpus: 0.5
+    pids_limit: 256
+    ulimits:
+      core: 0
+    logging:
+      options:
+        max-size: '5m'
+        max-file: '3'
+    restart: unless-stopped

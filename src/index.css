@@ -1,0 +1,674 @@
+@import '@blueprintjs/core/lib/css/blueprint.css';
+@import '@blueprintjs/icons/lib/css/blueprint-icons.css';
+
+/* Reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html,
+body,
+#root {
+  height: 100%;
+}
+body {
+  margin: 0;
+  background: #f6f7f9;
+}
+
+/* Blueprint draws a heavy focus ring on every interactive element. */
+*:focus,
+*:focus-visible {
+  outline: none !important;
+}
+
+/* Application shell */
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding: 8px 12px;
+  background: #fff;
+  border-bottom: 1px solid rgb(17 20 24 / 15%);
+}
+.app-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.app-identity h4 {
+  margin: 0;
+}
+.app-subtitle {
+  color: #5f6b7c;
+  font-size: 12px;
+}
+.app-navigation {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.paper-reference {
+  display: inline-flex;
+  align-items: center;
+}
+/* The DOI logo is a raw SVG sized in em, not a Blueprint icon. */
+.doi-icon {
+  width: 16px;
+  height: 16px;
+}
+.citation-menu {
+  min-width: 240px;
+}
+.app-body {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Help glyph. Blueprint's `label:not(.bp6-inline) .bp6-popover-target` rule
+   out-specifies a plain class selector, hence the !important. */
+.help-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.help-label .help-icon.bp6-popover-target {
+  display: flex !important;
+  align-items: center;
+  margin-top: 0;
+}
+.help-icon {
+  color: #5f6b7c;
+  cursor: help;
+}
+.help-icon:hover {
+  color: #2d72d2;
+}
+
+/* The one tooltip of the application. react-science lays the body out; what is
+   set here is the typography, which its inline styles never touch. The title
+   inherits `font-weight: 600` from the body element, so every other part has to
+   reset it — an inherited value loses to any rule that matches directly. */
+.help-tooltip .bp6-popover-content {
+  padding: 8px 10px;
+  font-size: 12px;
+  line-height: 1.45;
+}
+.help-tooltip p {
+  order: 1;
+  margin: 0;
+  padding-top: 5px;
+  color: #d3d8de;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.45;
+}
+.help-tooltip ul {
+  order: 2;
+  margin-top: 6px;
+  color: #c5cbd3;
+}
+.help-tooltip ul span {
+  font-size: 11.5px;
+  font-weight: 400;
+  line-height: 1.35;
+}
+.help-tooltip a {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Builder grid: core and fragments side by side, the rest full width */
+.builder {
+  display: grid;
+  grid-template-columns: minmax(380px, 5fr) minmax(420px, 7fr);
+  gap: 12px;
+  padding: 12px;
+}
+.builder > * {
+  min-width: 0;
+}
+.builder > *:nth-child(n + 3) {
+  grid-column: 1 / -1;
+}
+@media (max-width: 1100px) {
+  .builder {
+    grid-template-columns: 1fr;
+  }
+  .builder > *:nth-child(n + 3) {
+    grid-column: 1;
+  }
+}
+
+/* Panels */
+.panel-heading,
+.panel-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.panel-heading {
+  justify-content: space-between;
+}
+.panel-heading h5,
+.panel-title h5 {
+  margin: 0;
+}
+.panel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.panel-body {
+  overflow-y: auto;
+  max-height: 460px;
+}
+
+/* Core panel */
+.core-editor {
+  border: 1px solid rgb(17 20 24 / 15%);
+  border-radius: 2px;
+  overflow: hidden;
+  background: #fff;
+}
+.core-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+/* Fragment list */
+.fragment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+  max-height: 520px;
+}
+.fragments-panel__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+.fragment-row {
+  display: grid;
+  grid-template-columns: 20px 128px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 6px;
+  border: 1px solid rgb(17 20 24 / 15%);
+  border-radius: 2px;
+  background: #fff;
+  cursor: pointer;
+}
+.fragment-row[data-selected='true'] {
+  border-color: #2d72d2;
+  box-shadow: inset 0 0 0 1px #2d72d2;
+}
+.fragment-row__index {
+  color: #5f6b7c;
+  font-size: 12px;
+  text-align: right;
+}
+.fragment-row__thumbnail {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 76px;
+  border-radius: 2px;
+  background: #f6f7f9;
+}
+.fragment-row__empty {
+  color: #5f6b7c;
+  font-size: 12px;
+}
+.fragment-row__main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+/* The name is wrapped in its tooltip, so the wrapper is the flex item. */
+.fragment-row__main > .bp6-popover-target {
+  min-width: 0;
+}
+.fragment-row__actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+/* One capsule per R group the core actually carries: filled where the fragment
+   is used, tinted where it is kept out. */
+.fragment-targets {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+.fragment-targets .bp6-tag {
+  min-width: 34px;
+  justify-content: center;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+.fragment-targets-empty {
+  font-size: 12px;
+  font-style: italic;
+}
+
+/* Fragment editor */
+.fragment-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+}
+.fragment-editor__draw {
+  border: 1px solid rgb(17 20 24 / 15%);
+  border-radius: 2px;
+  overflow: hidden;
+  background: #fff;
+}
+.fragment-editor__preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 96px;
+  border-radius: 2px;
+  background: #f6f7f9;
+}
+.fragment-editor__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.fragment-editor__smiles {
+  font-family: monospace;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.fragment-dialog {
+  width: 640px;
+  max-width: 92vw;
+}
+.fragment-dialog .fragment-editor {
+  padding: 0;
+}
+
+/* Generate bar */
+.generate-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+.generate-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.generate-outcome::before {
+  content: '·';
+  margin-right: 12px;
+  color: #5f6b7c;
+}
+.generate-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+.generate-progress .bp6-progress-bar {
+  flex: 1 1 auto;
+}
+.generate-progress-count {
+  color: #5f6b7c;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.generate-panel .bp6-callout {
+  margin-top: 10px;
+}
+
+/* Results */
+.results-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.results-count {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.results-toolbar-gap {
+  flex: 1 1 auto;
+}
+.column-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 12px;
+}
+.parallel-coordinates {
+  min-width: 0;
+  overflow-x: auto;
+}
+.parallel-coordinates-axis text {
+  fill: #5f6b7c;
+  font-size: 10px;
+}
+/* The axis labels are HTML rather than SVG text, so each can carry a tooltip.
+   They sit in the top margin of the plot and must never swallow a brush drag. */
+.parallel-coordinates-labels {
+  pointer-events: none;
+}
+.parallel-coordinates-label {
+  position: absolute;
+  top: 2px;
+  color: #1c2127;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  cursor: help;
+  pointer-events: auto;
+}
+.parallel-coordinates-label:hover {
+  color: #2d72d2;
+}
+.parallel-coordinates-tooltip {
+  position: absolute;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 5px 8px;
+  border-radius: 2px;
+  background: #404854;
+  box-shadow:
+    0 0 0 1px rgb(17 20 24 / 10%),
+    0 10px 15px -3px rgb(0 0 0 / 10%);
+  color: #f6f7f9;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.download-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0;
+}
+.results-table {
+  overflow: auto;
+  max-height: 520px;
+  border: 1px solid rgb(17 20 24 / 15%);
+  border-radius: 2px;
+  background: #fff;
+}
+.molecule-table-header {
+  gap: 8px;
+  padding: 4px 8px;
+  border-bottom: 1px solid rgb(17 20 24 / 15%);
+  color: #5f6b7c;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+/* Every header cell is wrapped in its tooltip, so the wrapper is the grid item
+   and it has to hand its whole width to the cell it holds. */
+.molecule-table-header > .bp6-popover-target {
+  display: block;
+  min-width: 0;
+}
+.molecule-table-sort {
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: right;
+  cursor: pointer;
+}
+.molecule-table-header .bp6-popover-target > span {
+  cursor: help;
+}
+.molecule-row {
+  gap: 8px;
+  padding: 0 8px;
+  /* The row is a <button> so it is reachable by keyboard, but it must not carry
+     any of the default button chrome. */
+  border: none;
+  border-bottom: 1px solid rgb(17 20 24 / 8%);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.molecule-row:hover {
+  background: #f6f7f9;
+}
+.molecule-row[data-selected='true'] {
+  background: #d9e5f7;
+}
+/* The row whose polyline the pointer is over, in the plot above. The bar uses
+   the colour that polyline is drawn with. */
+.molecule-row[data-highlighted='true'] {
+  background: #e8eaed;
+  box-shadow: inset 3px 0 0 #1c2127;
+}
+.molecule-cell-number {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.molecule-table {
+  min-width: 0;
+}
+
+/* Panels that only need to bound their own content */
+.core-panel,
+.results-panel {
+  min-width: 0;
+}
+.panel-hint {
+  margin: 6px 0;
+  color: #5f6b7c;
+  font-size: 12px;
+}
+
+/* Glossary terms, in help prose and anywhere else GlossaryText is used */
+.glossary-term {
+  border-bottom: 1px dashed #2d72d2;
+  color: #1c6e42;
+  cursor: help;
+}
+.glossary-tooltip-body {
+  width: 280px;
+}
+.glossary-tooltip-title {
+  font-size: 13px;
+  font-weight: 600;
+}
+.glossary-tooltip-body p {
+  margin: 5px 0 0;
+  color: #d3d8de;
+  font-size: 12px;
+  line-height: 1.45;
+}
+.glossary-tooltip-body ul {
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.glossary-tooltip-body li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px;
+  padding-top: 3px;
+}
+.glossary-tooltip-body code {
+  padding: 1px 4px;
+  border-radius: 2px;
+  background: rgb(255 255 255 / 12%);
+  color: #e5e8eb;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+.glossary-tooltip-body em {
+  color: #abb3bf;
+  font-size: 11px;
+}
+
+/* Help page: a sticky table of contents beside one readable column */
+.help-page {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 820px);
+  justify-content: center;
+  gap: 24px;
+  padding: 12px;
+}
+.help-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+.help-toc {
+  position: sticky;
+  top: 68px;
+  align-self: start;
+  max-height: calc(100vh - 80px);
+  overflow-y: auto;
+  padding: 10px;
+  border-radius: 2px;
+  background: #fff;
+  box-shadow:
+    0 0 0 1px rgb(17 20 24 / 10%),
+    0 1px 1px rgb(17 20 24 / 10%);
+}
+.help-toc h5 {
+  margin: 0 0 6px;
+}
+.help-toc-links {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.help-toc-links .bp6-button {
+  height: auto;
+  min-height: 26px;
+  padding: 3px 8px;
+  text-align: left;
+  white-space: normal;
+  line-height: 1.3;
+}
+.help-section {
+  scroll-margin-top: 64px;
+}
+@media (width <= 900px) {
+  .help-page {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .help-toc {
+    position: static;
+    max-height: none;
+  }
+  .help-toc-links {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .help-toc-links .bp6-button {
+    width: auto;
+  }
+}
+.help-section h4 {
+  margin: 0 0 8px;
+}
+.help-section p {
+  margin: 0 0 8px;
+  line-height: 1.5;
+}
+.help-section :last-child {
+  margin-bottom: 0;
+}
+.help-glossary dt {
+  margin-top: 10px;
+  font-weight: 600;
+}
+.help-glossary dd {
+  margin: 2px 0 0 16px;
+  color: #404854;
+}
+.help-glossary ul {
+  margin: 2px 0 0;
+  padding-left: 18px;
+}
+
+/* Examples gallery */
+.examples-page {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 12px;
+}
+.examples-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+.example-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.example-card h5 {
+  margin: 0;
+}
+.example-card p {
+  flex: 1 1 auto;
+  margin: 0;
+  color: #404854;
+  font-size: 13px;
+  line-height: 1.4;
+}
+.example-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 140px;
+  border-radius: 2px;
+  background: #f6f7f9;
+}

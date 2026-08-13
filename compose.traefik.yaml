@@ -1,0 +1,35 @@
+# Traefik deployment — requires an external Docker network named "traefik".
+# Select via COMPOSE_FILE in .env (this file's name), then: docker compose up -d
+services:
+  vcl:
+    image: ghcr.io/cheminfo/vcl:latest
+    build: .
+    networks:
+      - default
+      - traefik
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.vcl.rule=Host(`vcl.cheminfo.org`)'
+      - 'traefik.http.routers.vcl.entrypoints=websecure'
+      - 'traefik.http.routers.vcl.tls.certresolver=letsencrypt'
+      - 'traefik.http.services.vcl.loadbalancer.server.port=80'
+    init: true
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    mem_limit: 512m
+    cpus: 0.5
+    pids_limit: 256
+    ulimits:
+      core: 0
+    logging:
+      options:
+        max-size: '5m'
+        max-file: '3'
+    restart: unless-stopped
+
+networks:
+  traefik:
+    external: true

@@ -1,0 +1,62 @@
+{
+  "name": "vcl",
+  "version": "0.0.0",
+  "description": "Virtual combinatorial library — build a virtual library from a core structure with R groups and a set of fragments",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "vite build",
+    "check-types": "tsc --noEmit",
+    "dev": "vite",
+    "eslint": "eslint .",
+    "eslint-fix": "eslint . --fix",
+    "prettier": "prettier --check .",
+    "prettier-write": "prettier --write .",
+    "preview": "vite preview",
+    "test": "npm run test-only && npm run check-types && npm run eslint && npm run prettier",
+    "test-only": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@blueprintjs/core": "^6.18.0",
+    "@blueprintjs/icons": "^6.13.0",
+    "@blueprintjs/select": "^6.3.4",
+    "@preact/signals-react": "^3.12.0",
+    "@tanstack/react-virtual": "^3.14.9",
+    "cheminfo-font": "^1.28.0",
+    "d3-array": "^3.2.4",
+    "d3-brush": "^3.0.0",
+    "d3-scale": "^4.0.2",
+    "d3-selection": "^3.0.0",
+    "d3-shape": "^3.2.0",
+    "fifo-logger": "^2.0.1",
+    "openchemlib": "^9.24.0",
+    "openchemlib-utils": "^8.17.1",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-mf": "^3.1.1",
+    "react-ocl": "^8.7.2",
+    "react-science": "^21.0.0"
+  },
+  "devDependencies": {
+    "@types/d3-array": "^3.2.2",
+    "@types/d3-brush": "^3.0.6",
+    "@types/d3-scale": "^4.0.9",
+    "@types/d3-selection": "^3.0.11",
+    "@types/d3-shape": "^3.1.8",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@vitejs/plugin-react": "^6.0.5",
+    "@vitest/coverage-istanbul": "^4.1.10",
+    "@zakodium/tsconfig": "^1.0.5",
+    "eslint": "^9.39.5",
+    "eslint-config-zakodium": "^20.1.0",
+    "prettier": "^3.9.6",
+    "typescript": "^6.0.3",
+    "vite": "^8.2.1",
+    "vitest": "^4.1.10"
+  },
+  "overrides": {
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  }
+}
