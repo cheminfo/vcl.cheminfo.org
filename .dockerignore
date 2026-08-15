@@ -5,3 +5,9 @@ dist
 coverage
 .git
 .claude
+.deploy
+deploy.sh
+.github
+docs
+*.log
+.DS_Store

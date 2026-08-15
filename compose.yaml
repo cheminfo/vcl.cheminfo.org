@@ -1,13 +1,21 @@
+# Port-published deployment — no reverse proxy.
+# This is the default compose file (used when COMPOSE_FILE is unset).
+# cp .env.example .env
+# docker compose up -d
 services:
-  vcl:
-    # Use the released image by default. To build locally instead, run:
-    #   docker compose up -d --build
-    image: ghcr.io/cheminfo/vcl:latest
+  vcl-cheminfo-org:
+    # IMAGE_TAG is managed by ./deploy.sh so every build stays addressable for
+    # a rollback. Unset, this runs the released :latest image.
+    image: ${IMAGE_NAME:-ghcr.io/cheminfo/vcl.cheminfo.org}:${IMAGE_TAG:-latest}
     build: .
     env_file: .env
+    environment:
+      SERVER_PORT: ${PORT:-10811}
     ports:
-      - '${PORT:-10811}:80'
+      - '${PORT:-10811}:${PORT:-10811}'
     init: true
+    restart: unless-stopped
+    stop_grace_period: 30s
     read_only: true
     security_opt:
       - no-new-privileges:true
@@ -19,7 +27,7 @@ services:
     ulimits:
       core: 0
     logging:
+      driver: json-file
       options:
-        max-size: '5m'
+        max-size: 5m
         max-file: '3'
-    restart: unless-stopped

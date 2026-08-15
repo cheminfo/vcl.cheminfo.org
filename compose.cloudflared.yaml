@@ -4,14 +4,21 @@
 #   Networking → Tunnels → Create a tunnel → Cloudflared connector →
 #   copy the token into .env as TUNNEL_TOKEN=... → open the tunnel →
 #   Published applications tab → add application with
-#   Service = HTTP, URL = vcl:80.
+#   Service = HTTP, URL = vcl-cheminfo-org:10811 (the PORT of .env).
 #
 # Select via COMPOSE_FILE in .env (this file's name), then: docker compose up -d
 services:
-  vcl:
-    image: ghcr.io/cheminfo/vcl:latest
+  vcl-cheminfo-org:
+    # IMAGE_TAG is managed by ./deploy.sh so every build stays addressable for
+    # a rollback. Unset, this runs the released :latest image.
+    image: ${IMAGE_NAME:-ghcr.io/cheminfo/vcl.cheminfo.org}:${IMAGE_TAG:-latest}
     build: .
+    env_file: .env
+    environment:
+      SERVER_PORT: ${PORT:-10811}
     init: true
+    restart: unless-stopped
+    stop_grace_period: 30s
     read_only: true
     security_opt:
       - no-new-privileges:true
@@ -23,16 +30,17 @@ services:
     ulimits:
       core: 0
     logging:
+      driver: json-file
       options:
-        max-size: '5m'
+        max-size: 5m
         max-file: '3'
-    restart: unless-stopped
 
   cloudflared:
     image: cloudflare/cloudflared:latest
     command: tunnel --no-autoupdate run --token ${TUNNEL_TOKEN}
     env_file: .env
     init: true
+    restart: unless-stopped
     read_only: true
     security_opt:
       - no-new-privileges:true
@@ -44,7 +52,7 @@ services:
     ulimits:
       core: 0
     logging:
+      driver: json-file
       options:
-        max-size: '5m'
+        max-size: 5m
         max-file: '2'
-    restart: unless-stopped

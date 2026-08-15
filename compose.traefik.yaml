@@ -1,19 +1,28 @@
 # Traefik deployment — requires an external Docker network named "traefik".
 # Select via COMPOSE_FILE in .env (this file's name), then: docker compose up -d
 services:
-  vcl:
-    image: ghcr.io/cheminfo/vcl:latest
+  vcl-cheminfo-org:
+    # IMAGE_TAG is managed by ./deploy.sh so every build stays addressable for
+    # a rollback. Unset, this runs the released :latest image.
+    image: ${IMAGE_NAME:-ghcr.io/cheminfo/vcl.cheminfo.org}:${IMAGE_TAG:-latest}
     build: .
+    env_file: .env
+    environment:
+      SERVER_PORT: ${PORT:-10811}
+    # Only the traefik network: a `default` alongside it would create a second,
+    # unused subnet, and the host's pool is finite.
     networks:
-      - default
       - traefik
     labels:
       - 'traefik.enable=true'
+      - 'traefik.docker.network=traefik'
       - 'traefik.http.routers.vcl.rule=Host(`vcl.cheminfo.org`)'
       - 'traefik.http.routers.vcl.entrypoints=websecure'
       - 'traefik.http.routers.vcl.tls.certresolver=letsencrypt'
-      - 'traefik.http.services.vcl.loadbalancer.server.port=80'
+      - 'traefik.http.services.vcl.loadbalancer.server.port=${PORT:-10811}'
     init: true
+    restart: unless-stopped
+    stop_grace_period: 30s
     read_only: true
     security_opt:
       - no-new-privileges:true
@@ -25,10 +34,10 @@ services:
     ulimits:
       core: 0
     logging:
+      driver: json-file
       options:
-        max-size: '5m'
+        max-size: 5m
         max-file: '3'
-    restart: unless-stopped
 
 networks:
   traefik:

@@ -64,13 +64,37 @@ docker compose up -d
 Build from the checkout instead of pulling the released image with
 `docker compose up -d --build`.
 
+## Deploy and rollback
+
+Never deploy with `git pull && docker compose up -d --build`: the build
+overwrites the running tag in place and `git pull` moves the source at the same
+time, so there is nothing left to go back to. Use `./deploy.sh`.
+
+```sh
+./deploy.sh                                  # pull, build, start, health-check, auto-revert on failure
+./deploy.sh rollback                         # back to the previous known-good deploy
+./deploy.sh rollback 20260801-1332-a1b2c3d   # back to a specific one
+./deploy.sh list                             # what is running, and what can be rolled back to
+./deploy.sh prune                            # drop images older than the last 10 deploys
+```
+
+Each deploy builds an immutable tag `<utc date>-<utc hhmm>-<short sha>`, writes
+it to `IMAGE_TAG` in `.env`, and appends `date tag commit` to
+`.deploy/history`. The new container is probed on `/` from inside the container
+— the traefik and cloudflared modes publish no host port — and automatically
+reverted if it does not answer. A rollback rewrites `IMAGE_TAG` and checks out
+the recorded commit, so the image and the compose file that goes with it move
+back together; it needs no build and no network.
+
 ## Environment variables
 
-| Variable       | Default | Used by                    | Description                                              |
-| -------------- | ------- | -------------------------- | -------------------------------------------------------- |
-| `COMPOSE_FILE` | unset   | `docker compose`           | Selects the deployment mode. Unset means `compose.yaml`. |
-| `PORT`         | `10811` | `compose.yaml`             | Host port. The container always serves on `80`.          |
-| `TUNNEL_TOKEN` | unset   | `compose.cloudflared.yaml` | Cloudflare Tunnel connector token.                       |
+| Variable       | Default                             | Used by                    | Description                                                                  |
+| -------------- | ----------------------------------- | -------------------------- | ---------------------------------------------------------------------------- |
+| `COMPOSE_FILE` | unset                               | `docker compose`           | Selects the deployment mode. Unset means `compose.yaml`.                     |
+| `PORT`         | `10811`                             | every compose file         | Port the container serves on, and publishes for `compose.yaml`.              |
+| `IMAGE_NAME`   | `ghcr.io/cheminfo/vcl.cheminfo.org` | every compose file         | Image the compose files run.                                                 |
+| `IMAGE_TAG`    | `latest`                            | every compose file         | Rewritten by `./deploy.sh` on each deploy and rollback — never edit by hand. |
+| `TUNNEL_TOKEN` | unset                               | `compose.cloudflared.yaml` | Cloudflare Tunnel connector token.                                           |
 
 The Vite dev server port (`10812`, the host port plus one) is a constant in
 `vite.config.ts`; there is no env var for it.
