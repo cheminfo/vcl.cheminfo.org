@@ -1,8 +1,12 @@
 import type { Reference } from './reference.ts';
 import { doiUrl } from './reference.ts';
+import { renderHtml, renderMarkdown, renderText } from './render.ts';
+import type { CitationStyleId } from './segments.ts';
+import { citationSegments } from './segments.ts';
 
-/** The citation formats the reference can be copied in. */
-export type CitationFormatId = 'text' | 'markdown' | 'bibtex' | 'ris' | 'doi';
+/** The formats the reference can be copied in. */
+export type CitationFormatId =
+  'text' | 'html' | 'markdown' | 'bibtex' | 'ris' | 'doi';
 
 /** One entry of the copy menu. */
 export interface CitationFormat {
@@ -11,32 +15,91 @@ export interface CitationFormat {
   label: string;
   /** Where that format is pasted, shown on the right of the entry. */
   hint: string;
+  /**
+   * Whether the format is written differently by each journal style, and so
+   * opens the submenu of styles rather than copying straight away.
+   */
+  styled: boolean;
 }
 
-/** Every format offered, in the order the menu lists them. */
+/**
+ * Every format offered, in the order the menu lists them. Plain text is not
+ * one of them: an HTML copy carries it as its second flavour, so a paste into
+ * a plain editor already gives the unmarked line.
+ */
 export const CITATION_FORMATS = [
-  { id: 'text', label: 'Plain text', hint: 'ACS style' },
-  { id: 'markdown', label: 'Markdown', hint: 'README, issue' },
-  { id: 'bibtex', label: 'BibTeX', hint: 'LaTeX' },
-  { id: 'ris', label: 'RIS', hint: 'EndNote, Zotero' },
-  { id: 'doi', label: 'DOI link', hint: 'URL' },
+  { id: 'html', label: 'HTML', hint: 'Word, Docs, email', styled: true },
+  { id: 'markdown', label: 'Markdown', hint: 'README, issue', styled: true },
+  { id: 'bibtex', label: 'BibTeX', hint: 'LaTeX', styled: false },
+  { id: 'ris', label: 'RIS', hint: 'EndNote, Zotero', styled: false },
+  { id: 'doi', label: 'DOI link', hint: 'URL', styled: false },
 ] as const satisfies readonly CitationFormat[];
+
+/** The style a format that has one is written in unless another is picked. */
+export const DEFAULT_CITATION_STYLE: CitationStyleId = 'acs';
+
+/** One entry of the download menu: a file a reference manager imports. */
+export interface CitationDownload {
+  format: CitationFormatId;
+  label: string;
+  hint: string;
+  extension: string;
+  mimeType: string;
+}
+
+/**
+ * The files offered for download. Zotero, Mendeley and EndNote all import
+ * both, and their connectors recognise the MIME types below on their own.
+ */
+export const CITATION_DOWNLOADS = [
+  {
+    format: 'ris',
+    label: 'RIS file',
+    hint: 'Zotero, Mendeley, EndNote',
+    extension: 'ris',
+    mimeType: 'application/x-research-info-systems',
+  },
+  {
+    format: 'bibtex',
+    label: 'BibTeX file',
+    hint: 'JabRef, Overleaf',
+    extension: 'bib',
+    mimeType: 'application/x-bibtex',
+  },
+] as const satisfies readonly CitationDownload[];
+
+/**
+ * Name the saved file carries, e.g. `Vanderveen2015.ris`.
+ * @param reference - Reference the file holds.
+ * @param extension - Extension of the file, without its dot.
+ * @returns The file name.
+ */
+export function citationFilename(
+  reference: Reference,
+  extension: string,
+): string {
+  return `${bibTeXKey(reference)}.${extension}`;
+}
 
 /**
  * Render a reference in one of the citation formats.
  * @param reference - Reference to render.
  * @param format - Format to render it in.
+ * @param style - Journal style, for the formats that have one.
  * @returns The citation, ready to be copied to the clipboard.
  */
 export function formatCitation(
   reference: Reference,
   format: CitationFormatId,
+  style: CitationStyleId = DEFAULT_CITATION_STYLE,
 ): string {
   switch (format) {
     case 'text':
-      return formatText(reference);
+      return renderText(citationSegments(reference, style));
+    case 'html':
+      return renderHtml(citationSegments(reference, style));
     case 'markdown':
-      return formatMarkdown(reference);
+      return renderMarkdown(citationSegments(reference, style));
     case 'bibtex':
       return formatBibTeX(reference);
     case 'ris':
@@ -46,24 +109,6 @@ export function formatCitation(
     default:
       throw new Error(`unknown citation format: ${String(format)}`);
   }
-}
-
-function formatText(reference: Reference): string {
-  const { title, journalAbbreviation, year, volume } = reference;
-  return [
-    `${authorList(reference, '; ')} ${title}.`,
-    `${journalAbbreviation} ${year}, ${volume}, ${pageRange(reference)}.`,
-    doiUrl(reference),
-  ].join(' ');
-}
-
-function formatMarkdown(reference: Reference): string {
-  const { title, journalAbbreviation, year, volume, doi } = reference;
-  return [
-    `${authorList(reference, '; ')} ${title}.`,
-    `*${journalAbbreviation}* **${year}**, *${volume}*, ${pageRange(reference)}.`,
-    `[doi:${doi}](${doiUrl(reference)})`,
-  ].join(' ');
 }
 
 function formatBibTeX(reference: Reference): string {
@@ -115,11 +160,6 @@ function authorList(reference: Reference, separator: string): string {
   return reference.authors
     .map((author) => `${author.family}, ${author.given}`)
     .join(separator);
-}
-
-function pageRange(reference: Reference): string {
-  // En dash: what every style asks for in a page range.
-  return `${reference.firstPage}–${reference.lastPage}`;
 }
 
 function bibTeXKey(reference: Reference): string {

@@ -11,6 +11,6 @@
     <path d="M16 9.5 16 5.5M21.2 18.5 24.8 20.6M10.8 18.5 7.2 20.6" />
   </g>
   <circle cx="16" cy="4.6" r="2.6" fill="#eb6847" />
-  <circle cx="25.6" cy="21.2" r="2.6" fill="#32a467" />
-  <circle cx="6.4" cy="21.2" r="2.6" fill="#fbb360" />
+  <circle cx="25.6" cy="21.2" r="2.6" fill="#eb6847" />
+  <circle cx="6.4" cy="21.2" r="2.6" fill="#eb6847" />
 </svg>

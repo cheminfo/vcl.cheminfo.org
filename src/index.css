@@ -1,6 +1,38 @@
 @import '@blueprintjs/core/lib/css/blueprint.css';
 @import '@blueprintjs/icons/lib/css/blueprint-icons.css';
 
+:root {
+  /* Neutrals, geometry and type shared by every *.cheminfo.org site. */
+  --surface: #ffffff;
+  --surface-sunken: #f5f7fa;
+  --surface-raised: #ffffff;
+  --border: #dfe3e8;
+  --border-strong: #c3cad3;
+  --text: #16202c;
+  --text-muted: #5b6875;
+  --text-faint: #8a96a3;
+
+  --radius: 10px;
+  --radius-lg: 16px;
+  --shadow-sm: 0 1px 2px rgb(16 32 48 / 8%);
+  --shadow-md: 0 4px 14px rgb(16 32 48 / 10%);
+  --shadow-lg: 0 12px 32px rgb(16 32 48 / 16%);
+
+  --header-height: 3.5rem;
+
+  /* The two colours this site owns: the core, and the fragments hung off it. */
+  --brand: #2d72d2;
+  --brand-alt: #eb6847;
+
+  /* The mark's orange reaches 3.2:1 on white — short of what text needs, so set
+     text in a darkened one (5.9:1) of the same hue. */
+  --brand-alt-text: #9a3412;
+
+  --accent: var(--brand);
+
+  color-scheme: light;
+}
+
 /* Reset */
 *,
 *::before,
@@ -14,7 +46,20 @@ body,
 }
 body {
   margin: 0;
-  background: #f6f7f9;
+  background: var(--surface-sunken);
+  color: var(--text);
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
+    sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+input,
+textarea,
+select,
+button {
+  font-family: inherit;
 }
 
 /* Blueprint draws a heavy focus ring on every interactive element. */
@@ -33,45 +78,82 @@ body {
   position: sticky;
   top: 0;
   z-index: 20;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.app-header__inner {
   display: flex;
-  flex-wrap: wrap;
+  height: var(--header-height);
   align-items: center;
-  justify-content: space-between;
-  gap: 8px 16px;
-  padding: 8px 12px;
-  background: #fff;
-  border-bottom: 1px solid rgb(17 20 24 / 15%);
+  gap: 1rem;
+  padding: 0 1.25rem;
 }
-.app-identity {
+.brand {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
+  align-items: center;
+  color: var(--text);
+  font-weight: 700;
+  gap: 0.55rem;
 }
-.app-identity h4 {
-  margin: 0;
+.brand:hover {
+  text-decoration: none;
 }
-.app-subtitle {
-  color: #5f6b7c;
-  font-size: 12px;
+.brand-mark {
+  display: block;
+  flex: none;
+}
+.wordmark {
+  font-size: 1.0625rem;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+.wordmark__lead {
+  color: var(--brand);
+}
+.wordmark__dot {
+  color: var(--text-faint);
+}
+.wordmark__alt {
+  color: var(--brand-alt-text);
+}
+/* The tagline is what the tool does — too long for the bar, so it sits on its
+   own line directly under it rather than being dropped. */
+.app-tagline {
+  padding: 0.6rem 1.25rem 0;
+  color: var(--text-muted);
+  font-size: 0.875rem;
 }
 .app-navigation {
   display: flex;
-  flex-wrap: wrap;
+  flex: 1 1 auto;
+  min-width: 0;
   align-items: center;
-  gap: 8px;
+  justify-content: flex-end;
+  gap: 0.15rem;
 }
-.paper-reference {
+/* Carried by both a link and a button, so the two read alike in the bar. */
+.nav-link {
   display: inline-flex;
   align-items: center;
+  padding: 0.4rem 0.7rem;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+  gap: 0.4rem;
+  cursor: pointer;
 }
-/* The DOI logo is a raw SVG sized in em, not a Blueprint icon. */
-.doi-icon {
-  width: 16px;
-  height: 16px;
+.nav-link:hover {
+  background: var(--surface-sunken);
+  color: var(--text);
+  text-decoration: none;
 }
-.citation-menu {
-  min-width: 240px;
+.nav-link--active {
+  background: color-mix(in oklab, var(--accent) 12%, white);
+  color: var(--accent);
 }
 .app-body {
   flex: 1 1 auto;

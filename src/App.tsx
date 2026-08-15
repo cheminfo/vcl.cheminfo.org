@@ -1,16 +1,17 @@
-import { ButtonGroup, H4 } from '@blueprintjs/core';
+import { Tooltip } from '@blueprintjs/core';
 import { useSignalEffect } from '@preact/signals-react';
 import { useSignals } from '@preact/signals-react/runtime';
 import type { ReactElement } from 'react';
 import { useEffect } from 'react';
-import { Button } from 'react-science/ui';
 
-import { PaperReference } from './components/shared/PaperReference.tsx';
+import { CiteButton } from './citation/index.ts';
+import { BrandMark, Wordmark } from './components/shared/Brand.tsx';
 import type { HelpContent } from './components/shared/helpContent.tsx';
 import { helpTooltip } from './components/shared/helpContent.tsx';
 import { BuilderPage } from './pages/builder/BuilderPage.tsx';
 import { ExamplesPage } from './pages/help/ExamplesPage.tsx';
 import { HelpPage } from './pages/help/HelpPage.tsx';
+import { PAPER } from './paper.ts';
 import type { Route, TabId } from './state/view.ts';
 import { formatRoute, parseRoute, setActiveTab, view } from './state/view.ts';
 
@@ -81,30 +82,37 @@ export function App(): ReactElement {
   return (
     <div className="app">
       <header className="app-header">
-        <div className="app-identity">
-          <H4>Virtual combinatorial library</H4>
-          <span className="app-subtitle">
-            Combine a core carrying R groups with a set of fragments, then
-            screen the enumerated library on its predicted properties.
-          </span>
-        </div>
-        <nav className="app-navigation">
-          <ButtonGroup>
+        <div className="app-header__inner">
+          <a href="#/builder" className="brand" title="vcl.cheminfo.org">
+            <BrandMark />
+            <Wordmark />
+          </a>
+          <nav className="app-navigation">
             {TABS.map((tab) => (
-              <Button
-                key={tab.id}
-                active={tab.id === activeTab}
-                text={tab.label}
-                tooltipProps={helpTooltip(tab.help)}
-                onClick={() => {
-                  setActiveTab(tab.id);
-                }}
-              />
+              <Tooltip key={tab.id} {...helpTooltip(tab.help)}>
+                <button
+                  type="button"
+                  className={
+                    tab.id === activeTab
+                      ? 'nav-link nav-link--active'
+                      : 'nav-link'
+                  }
+                  onClick={() => {
+                    setActiveTab(tab.id);
+                  }}
+                >
+                  {tab.label}
+                </button>
+              </Tooltip>
             ))}
-          </ButtonGroup>
-          <PaperReference />
-        </nav>
+            <CiteButton reference={PAPER} />
+          </nav>
+        </div>
       </header>
+      <p className="app-tagline">
+        Combine a core carrying R groups with a set of fragments, then screen
+        the enumerated library on its predicted properties.
+      </p>
       <main className="app-body">{renderPage(activeTab)}</main>
     </div>
   );
