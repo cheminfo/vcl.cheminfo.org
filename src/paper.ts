@@ -1,4 +1,4 @@
-import type { Reference } from './citation/reference.ts';
+import type { Reference } from 'react-cheminfo/core';
 
 /** The article this tool implements. Metadata from Crossref. */
 export const PAPER: Reference = {

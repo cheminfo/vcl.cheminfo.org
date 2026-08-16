@@ -3,8 +3,8 @@ import { useSignalEffect } from '@preact/signals-react';
 import { useSignals } from '@preact/signals-react/runtime';
 import type { ReactElement } from 'react';
 import { useEffect } from 'react';
+import { CiteButton, EcosystemButton } from 'react-cheminfo/ui';
 
-import { CiteButton } from './citation/index.ts';
 import { BrandMark, Wordmark } from './components/shared/Brand.tsx';
 import type { HelpContent } from './components/shared/helpContent.tsx';
 import { helpTooltip } from './components/shared/helpContent.tsx';
@@ -87,7 +87,7 @@ export function App(): ReactElement {
             <BrandMark />
             <Wordmark />
           </a>
-          <nav className="app-navigation">
+          <nav className="app-header-nav">
             {TABS.map((tab) => (
               <Tooltip key={tab.id} {...helpTooltip(tab.help)}>
                 <button
@@ -105,8 +105,11 @@ export function App(): ReactElement {
                 </button>
               </Tooltip>
             ))}
-            <CiteButton reference={PAPER} />
           </nav>
+          <div className="app-header-actions">
+            <CiteButton reference={PAPER} />
+            <EcosystemButton currentSiteId="vcl" />
+          </div>
         </div>
       </header>
       <p className="app-tagline">
