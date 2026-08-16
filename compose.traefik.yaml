@@ -8,7 +8,7 @@ services:
     build: .
     env_file: .env
     environment:
-      SERVER_PORT: ${PORT:-10811}
+      SERVER_PORT: ${PORT:-10103}
     # Only the traefik network: a `default` alongside it would create a second,
     # unused subnet, and the host's pool is finite.
     networks:
@@ -19,7 +19,7 @@ services:
       - 'traefik.http.routers.vcl.rule=Host(`vcl.cheminfo.org`)'
       - 'traefik.http.routers.vcl.entrypoints=websecure'
       - 'traefik.http.routers.vcl.tls.certresolver=letsencrypt'
-      - 'traefik.http.services.vcl.loadbalancer.server.port=${PORT:-10811}'
+      - 'traefik.http.services.vcl.loadbalancer.server.port=${PORT:-10103}'
     init: true
     restart: unless-stopped
     stop_grace_period: 30s

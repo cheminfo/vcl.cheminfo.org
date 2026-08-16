@@ -119,7 +119,7 @@ set_env() {
 healthy() {
   local port
   port="$(sed -n 's/^PORT=//p' .env | tail -1)"
-  port="${port:-10811}"
+  port="${port:-10103}"
   docker compose ps --status running --quiet | grep -q . || return 1
   local i=0
   while [ "$i" -lt 30 ]; do

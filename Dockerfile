@@ -11,5 +11,5 @@ ENV SERVER_ROOT=/public
 ENV SERVER_FALLBACK_PAGE=/public/index.html
 # Overridden by compose with PORT, so deploy.sh can probe the same port in
 # every deployment mode.
-ENV SERVER_PORT=10811
-EXPOSE 10811
+ENV SERVER_PORT=10103
+EXPOSE 10103

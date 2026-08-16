@@ -10,9 +10,9 @@ services:
     build: .
     env_file: .env
     environment:
-      SERVER_PORT: ${PORT:-10811}
+      SERVER_PORT: ${PORT:-10103}
     ports:
-      - '${PORT:-10811}:${PORT:-10811}'
+      - '${PORT:-10103}:${PORT:-10103}'
     init: true
     restart: unless-stopped
     stop_grace_period: 30s

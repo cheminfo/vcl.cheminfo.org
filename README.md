@@ -37,7 +37,7 @@ npm install
 npm run dev
 ```
 
-The dev server listens on <http://localhost:10812> (the host port `10811` plus
+The dev server listens on <http://localhost:10104> (the host port `10103` plus
 one).
 
 ```sh
@@ -91,12 +91,12 @@ back together; it needs no build and no network.
 | Variable       | Default                             | Used by                    | Description                                                                  |
 | -------------- | ----------------------------------- | -------------------------- | ---------------------------------------------------------------------------- |
 | `COMPOSE_FILE` | unset                               | `docker compose`           | Selects the deployment mode. Unset means `compose.yaml`.                     |
-| `PORT`         | `10811`                             | every compose file         | Port the container serves on, and publishes for `compose.yaml`.              |
+| `PORT`         | `10103`                             | every compose file         | Port the container serves on, and publishes for `compose.yaml`.              |
 | `IMAGE_NAME`   | `ghcr.io/cheminfo/vcl.cheminfo.org` | every compose file         | Image the compose files run.                                                 |
 | `IMAGE_TAG`    | `latest`                            | every compose file         | Rewritten by `./deploy.sh` on each deploy and rollback — never edit by hand. |
 | `TUNNEL_TOKEN` | unset                               | `compose.cloudflared.yaml` | Cloudflare Tunnel connector token.                                           |
 
-The Vite dev server port (`10812`, the host port plus one) is a constant in
+The Vite dev server port (`10104`, the host port plus one) is a constant in
 `vite.config.ts`; there is no env var for it.
 
 ## Reference

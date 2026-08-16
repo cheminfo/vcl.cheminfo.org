@@ -4,7 +4,7 @@
 #   Networking → Tunnels → Create a tunnel → Cloudflared connector →
 #   copy the token into .env as TUNNEL_TOKEN=... → open the tunnel →
 #   Published applications tab → add application with
-#   Service = HTTP, URL = vcl-cheminfo-org:10811 (the PORT of .env).
+#   Service = HTTP, URL = vcl-cheminfo-org:10103 (the PORT of .env).
 #
 # Select via COMPOSE_FILE in .env (this file's name), then: docker compose up -d
 services:
@@ -15,7 +15,7 @@ services:
     build: .
     env_file: .env
     environment:
-      SERVER_PORT: ${PORT:-10811}
+      SERVER_PORT: ${PORT:-10103}
     init: true
     restart: unless-stopped
     stop_grace_period: 30s
