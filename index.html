@@ -4,14 +4,72 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#2d72d2" />
+    <!-- The title, the description, the canonical address and the social card
+         are written per page by `scripts/prerender.js`; these are what the
+         build carries before it runs. -->
+    <title>Virtual combinatorial library — enumerate and screen it</title>
     <meta
       name="description"
-      content="Build a virtual combinatorial library from a core structure with R groups and a set of fragments."
+      content="Draw a core carrying R groups, give each one a set of fragments, and enumerate every product — then screen the library on its predicted properties, in the browser."
     />
-    <title>Virtual combinatorial library</title>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "vcl.cheminfo.org",
+        "url": "https://vcl.cheminfo.org/",
+        "applicationCategory": "ScienceApplication",
+        "operatingSystem": "Any",
+        "browserRequirements": "Requires JavaScript",
+        "description": "Build a virtual combinatorial library from a core structure with R groups and a set of fragments, then screen the enumerated products on their predicted properties.",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+        "isAccessibleForFree": true,
+        "publisher": { "@type": "Organization", "name": "cheminfo" }
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
+    <noscript>
+      <h1>vcl.cheminfo.org — virtual combinatorial libraries</h1>
+      <p>
+        Draw a core carrying R groups, give each one a set of fragments, and
+        enumerate every product — then screen the library on its predicted
+        properties. The chemistry runs in your browser, so the tool needs
+        JavaScript.
+      </p>
+      <ul>
+        <li><a href="/">Builder — draw a core and enumerate the library</a></li>
+        <li><a href="/examples">Examples — ready-made libraries</a></li>
+        <li><a href="/help">Help — the manual and the glossary</a></li>
+      </ul>
+      <h2>Our other tools</h2>
+      <ul>
+        <li><a href="https://inchi.cheminfo.org/">inchi.cheminfo.org</a></li>
+        <li><a href="https://smiles.cheminfo.org/">smiles.cheminfo.org</a></li>
+        <li><a href="https://www.chemcalc.org/">www.chemcalc.org</a></li>
+        <li><a href="https://www.nmrium.org/">www.nmrium.org</a></li>
+        <li><a href="https://surge.cheminfo.org/">surge.cheminfo.org</a></li>
+        <li><a href="https://tex.cheminfo.org/">tex.cheminfo.org</a></li>
+        <li><a href="https://lcao.cheminfo.org/">lcao.cheminfo.org</a></li>
+        <li><a href="https://regexp.cheminfo.org/">regexp.cheminfo.org</a></li>
+        <li><a href="https://pdb.cheminfo.org/">pdb.cheminfo.org</a></li>
+        <li>
+          <a href="https://elucidation.cheminfo.org/"
+            >elucidation.cheminfo.org</a
+          >
+        </li>
+        <li>
+          <a href="https://equilibrium.cheminfo.org/"
+            >equilibrium.cheminfo.org</a
+          >
+        </li>
+        <li>
+          <a href="https://polycarp.cheminfo.org/">polycarp.cheminfo.org</a>
+        </li>
+      </ul>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

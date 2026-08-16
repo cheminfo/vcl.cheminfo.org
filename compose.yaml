@@ -4,19 +4,23 @@
 # docker compose up -d
 services:
   vcl-cheminfo-org:
-    # IMAGE_TAG is managed by ./deploy.sh so every build stays addressable for
+    # IMAGE_TAG is managed by the server's deploy script so every build stays addressable for
     # a rollback. Unset, this runs the released :latest image.
     image: ${IMAGE_NAME:-ghcr.io/cheminfo/vcl.cheminfo.org}:${IMAGE_TAG:-latest}
     build: .
-    env_file: .env
     environment:
       SERVER_PORT: ${PORT:-10103}
+      TRACKING_SCRIPT: ${TRACKING_SCRIPT:-}
     ports:
       - '${PORT:-10103}:${PORT:-10103}'
     init: true
     restart: unless-stopped
     stop_grace_period: 30s
     read_only: true
+    # The pages served are written here at startup, so the analytics snippet can
+    # go in them while the image filesystem stays read-only.
+    tmpfs:
+      - /public:rw,noexec,nosuid,size=128m
     security_opt:
       - no-new-privileges:true
     cap_drop:

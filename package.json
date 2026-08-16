@@ -5,7 +5,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "vite build",
+    "build": "vite build && node scripts/prerender.js",
     "check-types": "tsc --noEmit",
     "dev": "vite",
     "eslint": "eslint .",
@@ -32,7 +32,7 @@
     "openchemlib": "^9.24.0",
     "openchemlib-utils": "^8.17.1",
     "react": "^19.2.8",
-    "react-cheminfo": "^0.1.0",
+    "react-cheminfo": "^0.2.0",
     "react-dom": "^19.2.8",
     "react-mf": "^3.1.1",
     "react-ocl": "^8.7.2",

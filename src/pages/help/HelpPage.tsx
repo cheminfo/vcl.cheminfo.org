@@ -29,17 +29,17 @@ const ACTIVE_SECTION_OFFSET = 72;
 export function HelpPage(): ReactElement {
   const activeSection = useActiveSection();
 
-  // A tooltip links to #/help/<chapter>; open the manual there, and follow the
-  // hash while it changes, so the back button walks the chapters too.
+  // A tooltip links to /help/<chapter>; open the manual there, and follow the
+  // address while it changes, so the back button walks the chapters too.
   useEffect(() => {
-    function scrollToHashSection(): void {
-      const section = parseRoute(window.location.hash).section;
+    function scrollToAddressedSection(): void {
+      const section = parseRoute(window.location.pathname).section;
       if (section !== null) scrollToSection(section);
     }
-    scrollToHashSection();
-    window.addEventListener('hashchange', scrollToHashSection);
+    scrollToAddressedSection();
+    window.addEventListener('popstate', scrollToAddressedSection);
     return () => {
-      window.removeEventListener('hashchange', scrollToHashSection);
+      window.removeEventListener('popstate', scrollToAddressedSection);
     };
   }, []);
 
@@ -137,9 +137,9 @@ function GlossaryList(): ReactElement {
 }
 
 function showSection(id: string): void {
-  // The hash keeps the chapter shareable; the scroll also has to happen here,
-  // because reopening the chapter already in the hash fires no hashchange.
-  window.location.hash = `#/help/${id}`;
+  // The address keeps the chapter shareable; the scroll also has to happen
+  // here, because pushing the address the page is already on fires no event.
+  window.history.pushState(null, '', `/help/${id}`);
   scrollToSection(id);
 }
 

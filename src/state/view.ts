@@ -95,7 +95,7 @@ export function clearBrushRanges(): void {
   view.brushRanges.value = {};
 }
 
-/** What the location hash addresses: a tab, optionally one anchor inside it. */
+/** What the address names: a tab, optionally one anchor inside it. */
 export interface Route {
   tab: TabId;
   /** Anchor to scroll to once the tab is shown, e.g. a help chapter. */
@@ -103,12 +103,15 @@ export interface Route {
 }
 
 /**
- * Read the location hash, e.g. `#/help/draw-the-core`.
- * @param hash - Location hash, with or without its leading `#/`.
+ * Read an address, e.g. `/help/draw-the-core`. Routing is path based through
+ * the History API, so every tab is an address a crawler can fetch and a link
+ * can be handed out — a `#` is dropped by half the tools that pass links
+ * around, and the server never sees it.
+ * @param pathname - Path of the address, e.g. `/help/draw-the-core`.
  * @returns The tab it addresses, falling back to the builder, and its anchor.
  */
-export function parseRoute(hash: string): Route {
-  const [tab, section] = hash.replace(/^#\/?/, '').split('/');
+export function parseRoute(pathname: string): Route {
+  const [, tab, section] = pathname.split('/');
   return {
     tab: parseTabId(tab) ?? 'builder',
     section: section === undefined || section === '' ? null : section,
@@ -116,14 +119,42 @@ export function parseRoute(hash: string): Route {
 }
 
 /**
- * Write a route back as a location hash.
+ * Write a route back as an address. The builder is the home page rather than a
+ * page beside it, so the site has one address for it instead of two holding the
+ * same thing.
  * @param route - Tab and anchor to address.
- * @returns The canonical hash of that route.
+ * @returns The canonical path of that route.
  */
 export function formatRoute(route: Route): string {
+  if (route.tab === 'builder' && route.section === null) return '/';
   return route.section === null
-    ? `#/${route.tab}`
-    : `#/${route.tab}/${route.section}`;
+    ? `/${route.tab}`
+    : `/${route.tab}/${route.section}`;
+}
+
+/**
+ * The address a link written before this site routed by path points at. Those
+ * links are in bookmarks and in other people's pages, so they are answered
+ * rather than dropped.
+ * @param hash - Fragment of the address, e.g. `#/help/draw-the-core`.
+ * @returns The path it means, or null when the fragment names no tab.
+ */
+export function pathFromLegacyHash(hash: string): string | null {
+  const trimmed = hash.replace(/^#\/?/, '');
+  if (!trimmed) return null;
+  const [tab, section] = trimmed.split('/');
+  const known = parseTabId(tab);
+  if (!known) return null;
+  return formatRoute({ tab: known, section: section || null });
+}
+
+/**
+ * Put the address a legacy hash link meant in the bar, before anything reads
+ * it. Called once, at startup.
+ */
+export function adoptLegacyHashAddress(): void {
+  const path = pathFromLegacyHash(globalThis.location?.hash ?? '');
+  if (path) globalThis.history.replaceState(null, '', path);
 }
 
 /**

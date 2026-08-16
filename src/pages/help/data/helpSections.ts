@@ -94,11 +94,11 @@ export const HELP_SECTIONS = [
 export type HelpSectionId = (typeof HELP_SECTIONS)[number]['id'];
 
 /**
- * Location hash opening the manual at one of its chapters, for the "Learn more"
- * link of a tooltip.
+ * Address opening the manual at one of its chapters, for the "Learn more" link
+ * of a tooltip.
  * @param section - Chapter to open.
- * @returns The hash, e.g. `#/help/draw-the-core`.
+ * @returns The path, e.g. `/help/draw-the-core`.
  */
 export function helpLink(section: HelpSectionId): string {
-  return `#/help/${section}`;
+  return `/help/${section}`;
 }

@@ -3,7 +3,7 @@ import { useSignalEffect } from '@preact/signals-react';
 import { useSignals } from '@preact/signals-react/runtime';
 import type { ReactElement } from 'react';
 import { useEffect } from 'react';
-import { CiteButton, EcosystemButton } from 'react-cheminfo/ui';
+import { CiteButton, EcosystemButton, EcosystemLinks } from 'react-cheminfo/ui';
 
 import { BrandMark, Wordmark } from './components/shared/Brand.tsx';
 import type { HelpContent } from './components/shared/helpContent.tsx';
@@ -12,6 +12,7 @@ import { BuilderPage } from './pages/builder/BuilderPage.tsx';
 import { ExamplesPage } from './pages/help/ExamplesPage.tsx';
 import { HelpPage } from './pages/help/HelpPage.tsx';
 import { PAPER } from './paper.ts';
+import { writeDocumentMeta } from './state/documentMeta.ts';
 import type { Route, TabId } from './state/view.ts';
 import { formatRoute, parseRoute, setActiveTab, view } from './state/view.ts';
 
@@ -47,8 +48,8 @@ const TABS: ReadonlyArray<{ id: TabId; label: string; help: HelpContent }> = [
 
 /**
  * Application shell: the sticky header with the tab bar and the external links,
- * plus the page the active tab selects. The active tab is mirrored in the
- * location hash, so every tab is a shareable URL and the back button works.
+ * plus the page the active tab selects. The active tab is the address, so every
+ * tab is a shareable URL a crawler can fetch and the back button works.
  * @returns The whole application.
  */
 export function App(): ReactElement {
@@ -56,53 +57,56 @@ export function App(): ReactElement {
   const activeTab = view.activeTab.value;
 
   useEffect(() => {
-    function synchronizeFromHash(): void {
-      setActiveTab(routeFromHash().tab);
+    function synchronizeFromAddress(): void {
+      setActiveTab(routeFromAddress().tab);
+      writeDocumentMeta();
     }
-    // replaceState rather than an assignment: the first load must not push an
-    // extra history entry the back button would then have to walk through.
-    const canonicalHash = formatRoute(routeFromHash());
-    if (window.location.hash !== canonicalHash) {
-      window.history.replaceState(null, '', canonicalHash);
-    }
-    synchronizeFromHash();
-    window.addEventListener('hashchange', synchronizeFromHash);
+    synchronizeFromAddress();
+    window.addEventListener('popstate', synchronizeFromAddress);
     return () => {
-      window.removeEventListener('hashchange', synchronizeFromHash);
+      window.removeEventListener('popstate', synchronizeFromAddress);
     };
   }, []);
 
   useSignalEffect(() => {
     const tab = view.activeTab.value;
-    // Only the tab is compared: a hash addressing a section of the tab being
-    // shown, e.g. #/help/draw-the-core, must survive.
-    if (routeFromHash().tab !== tab) window.location.hash = `#/${tab}`;
+    // Only the tab is compared: an address naming a section of the tab being
+    // shown, e.g. /help/draw-the-core, must survive.
+    if (routeFromAddress().tab === tab) return;
+    window.history.pushState(null, '', formatRoute({ tab, section: null }));
+    writeDocumentMeta();
   });
 
   return (
     <div className="app">
       <header className="app-header">
         <div className="app-header__inner">
-          <a href="#/builder" className="brand" title="vcl.cheminfo.org">
+          <a href="/" className="brand" title="vcl.cheminfo.org">
             <BrandMark />
             <Wordmark />
           </a>
           <nav className="app-header-nav">
             {TABS.map((tab) => (
               <Tooltip key={tab.id} {...helpTooltip(tab.help)}>
-                <button
-                  type="button"
+                <a
+                  href={formatRoute({ tab: tab.id, section: null })}
                   className={
                     tab.id === activeTab
                       ? 'nav-link nav-link--active'
                       : 'nav-link'
                   }
-                  onClick={() => {
+                  onClick={(event) => {
+                    // A real link, so a crawler walks the site and a middle
+                    // click opens a tab; the plain click is the one taken over.
+                    if (event.metaKey || event.ctrlKey || event.shiftKey) {
+                      return;
+                    }
+                    event.preventDefault();
                     setActiveTab(tab.id);
                   }}
                 >
                   {tab.label}
-                </button>
+                </a>
               </Tooltip>
             ))}
           </nav>
@@ -117,6 +121,11 @@ export function App(): ReactElement {
         the enumerated library on its predicted properties.
       </p>
       <main className="app-body">{renderPage(activeTab)}</main>
+      <footer className="app-footer">
+        <div className="app-footer__inner">
+          <EcosystemLinks currentSiteId="vcl" />
+        </div>
+      </footer>
     </div>
   );
 }
@@ -127,6 +136,6 @@ function renderPage(tab: TabId): ReactElement {
   return <BuilderPage />;
 }
 
-function routeFromHash(): Route {
-  return parseRoute(window.location.hash);
+function routeFromAddress(): Route {
+  return parseRoute(window.location.pathname);
 }
