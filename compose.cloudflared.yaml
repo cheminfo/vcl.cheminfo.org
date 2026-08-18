@@ -15,6 +15,7 @@ services:
     build: .
     environment:
       SERVER_PORT: ${PORT:-10103}
+      BASE_PATH: ${BASE_PATH:-/}
       TRACKING_SCRIPT: ${TRACKING_SCRIPT:-}
     init: true
     restart: unless-stopped

@@ -3,6 +3,15 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
+
+# Where the built site will be served, origin and path together. Left unset it
+# is this site's own host at the root of it; a deployment putting the tool
+# under a path — one of several on a shared host — passes that address here and
+# every asset, route, canonical and sitemap entry is written under it:
+#   docker build --build-arg SITE_URL=https://example.org/vcl/ .
+ARG SITE_URL=
+ENV SITE_URL=$SITE_URL
+
 RUN npm run build
 
 FROM joseluisq/static-web-server:2-alpine

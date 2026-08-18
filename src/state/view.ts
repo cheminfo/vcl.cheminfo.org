@@ -3,6 +3,8 @@ import { signal } from '@preact/signals-react';
 import type { NumericPropertyKey, Range } from '../vcl/types.ts';
 import { NUMERIC_PROPERTIES } from '../vcl/types.ts';
 
+import { withBase } from './site.ts';
+
 /** The top level tabs of the application. */
 export type TabId = 'builder' | 'examples' | 'help';
 
@@ -154,7 +156,7 @@ export function pathFromLegacyHash(hash: string): string | null {
  */
 export function adoptLegacyHashAddress(): void {
   const path = pathFromLegacyHash(globalThis.location?.hash ?? '');
-  if (path) globalThis.history.replaceState(null, '', path);
+  if (path) globalThis.history.replaceState(null, '', withBase(path));
 }
 
 /**

@@ -1,75 +1,29 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <!-- Where this deployment is mounted. The build itself carries no mount —
+         its assets are relative — so this is what resolves them, and what the
+         page reads its own mount back off. The container rewrites it from
+         BASE_PATH when it starts, which is how one image serves both this
+         site's own host and a path of a shared one. It has to come before
+         anything it resolves. -->
+    <base href="/" />
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#2d72d2" />
-    <!-- The title, the description, the canonical address and the social card
-         are written per page by `scripts/prerender.js`; these are what the
-         build carries before it runs. -->
-    <title>Virtual combinatorial library — enumerate and screen it</title>
-    <meta
-      name="description"
-      content="Draw a core carrying R groups, give each one a set of fragments, and enumerate every product — then screen the library on its predicted properties, in the browser."
-    />
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "vcl.cheminfo.org",
-        "url": "https://vcl.cheminfo.org/",
-        "applicationCategory": "ScienceApplication",
-        "operatingSystem": "Any",
-        "browserRequirements": "Requires JavaScript",
-        "description": "Build a virtual combinatorial library from a core structure with R groups and a set of fragments, then screen the enumerated products on their predicted properties.",
-        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
-        "isAccessibleForFree": true,
-        "publisher": { "@type": "Organization", "name": "cheminfo" }
-      }
-    </script>
+    <!-- Where the title, the description, the canonical address, the social
+         card and the structured data are written, per address, by
+         `cheminfoPrerender` from `src/state/routes.ts`. The template carries
+         none of its own, so nothing here can be duplicated or taken back out. -->
+    <!--cheminfo:head-->
   </head>
   <body>
     <div id="root"></div>
-    <noscript>
-      <h1>vcl.cheminfo.org — virtual combinatorial libraries</h1>
-      <p>
-        Draw a core carrying R groups, give each one a set of fragments, and
-        enumerate every product — then screen the library on its predicted
-        properties. The chemistry runs in your browser, so the tool needs
-        JavaScript.
-      </p>
-      <ul>
-        <li><a href="/">Builder — draw a core and enumerate the library</a></li>
-        <li><a href="/examples">Examples — ready-made libraries</a></li>
-        <li><a href="/help">Help — the manual and the glossary</a></li>
-      </ul>
-      <h2>Our other tools</h2>
-      <ul>
-        <li><a href="https://inchi.cheminfo.org/">inchi.cheminfo.org</a></li>
-        <li><a href="https://smiles.cheminfo.org/">smiles.cheminfo.org</a></li>
-        <li><a href="https://www.chemcalc.org/">www.chemcalc.org</a></li>
-        <li><a href="https://www.nmrium.org/">www.nmrium.org</a></li>
-        <li><a href="https://surge.cheminfo.org/">surge.cheminfo.org</a></li>
-        <li><a href="https://tex.cheminfo.org/">tex.cheminfo.org</a></li>
-        <li><a href="https://lcao.cheminfo.org/">lcao.cheminfo.org</a></li>
-        <li><a href="https://regexp.cheminfo.org/">regexp.cheminfo.org</a></li>
-        <li><a href="https://pdb.cheminfo.org/">pdb.cheminfo.org</a></li>
-        <li>
-          <a href="https://elucidation.cheminfo.org/"
-            >elucidation.cheminfo.org</a
-          >
-        </li>
-        <li>
-          <a href="https://equilibrium.cheminfo.org/"
-            >equilibrium.cheminfo.org</a
-          >
-        </li>
-        <li>
-          <a href="https://polycarp.cheminfo.org/">polycarp.cheminfo.org</a>
-        </li>
-      </ul>
-    </noscript>
     <script type="module" src="/src/main.tsx"></script>
+    <!-- Where the pages a reader with no JavaScript can follow are written: the
+         body is an empty root element, so this is the only crawl path through
+         the site that costs nothing to render. -->
+    <!--cheminfo:body-->
   </body>
 </html>

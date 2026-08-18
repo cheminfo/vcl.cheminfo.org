@@ -1,7 +1,8 @@
+import { pageDocumentMeta } from 'react-cheminfo/core';
 import { expect, test } from 'vitest';
 
 import { HELP_SECTIONS, helpLink } from '../../pages/help/data/helpSections.ts';
-import { everyPage, pageMetaFor } from '../pageMeta.ts';
+import { PAGE_ROUTES } from '../routes.ts';
 import {
   TAB_IDS,
   formatRoute,
@@ -70,22 +71,35 @@ test('a link written when the site routed by the hash still opens', () => {
 });
 
 test('every page is titled and described on its own', () => {
-  const pages = everyPage();
-
-  expect(pages).toHaveLength(TAB_IDS.length);
-  expect(new Set(pages.map((page) => page.title)).size).toBe(pages.length);
-  expect(new Set(pages.map((page) => page.description)).size).toBe(
-    pages.length,
+  expect(PAGE_ROUTES).toHaveLength(TAB_IDS.length);
+  expect(new Set(PAGE_ROUTES.map((page) => page.title)).size).toBe(
+    PAGE_ROUTES.length,
   );
-  expect(pages.map((page) => page.canonicalPath)).toStrictEqual([
+  expect(new Set(PAGE_ROUTES.map((page) => page.description)).size).toBe(
+    PAGE_ROUTES.length,
+  );
+  expect(PAGE_ROUTES.map((page) => page.path)).toStrictEqual([
     '/',
     '/examples',
     '/help',
   ]);
+
+  for (const page of PAGE_ROUTES) {
+    // The site name is appended after the title, so it stops short of 60, and
+    // a description is cut off mid-sentence past 160 characters.
+    expect(page.title.length).toBeLessThan(60);
+    expect(page.description.length).toBeGreaterThanOrEqual(110);
+    expect(page.description.length).toBeLessThanOrEqual(160);
+  }
 });
 
 test('a chapter of the manual is indexed under the manual', () => {
+  const page = formatRoute({
+    tab: parseRoute('/help/draw-the-core').tab,
+    section: null,
+  });
+
   expect(
-    pageMetaFor({ tab: 'help', section: 'draw-the-core' }).canonicalPath,
-  ).toBe('/help');
+    pageDocumentMeta({ site: 'vcl', routes: PAGE_ROUTES, url: page }).canonical,
+  ).toBe('https://vcl.cheminfo.org/help');
 });

@@ -8,6 +8,7 @@ services:
     build: .
     environment:
       SERVER_PORT: ${PORT:-10103}
+      BASE_PATH: ${BASE_PATH:-/}
       TRACKING_SCRIPT: ${TRACKING_SCRIPT:-}
     # Only the traefik network: a `default` alongside it would create a second,
     # unused subnet, and the host's pool is finite.

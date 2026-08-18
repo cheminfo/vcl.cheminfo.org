@@ -78,15 +78,34 @@ server — is gitignored. The script gives each build an immutable tag, writes i
 to `IMAGE_TAG`, probes the new container, and reverts to the previous tag when
 it does not answer.
 
+## Where the site is served
+
+The site does not assume it owns the root of a host. `SITE_URL` is read **at
+build time** and carries the origin and the path together; its path half is
+what every asset, route, canonical link, social card and sitemap entry is
+written under, so putting the tool under a path is one variable and no code
+change:
+
+```sh
+SITE_URL=https://example.org/vcl/ npm run build
+docker build --build-arg SITE_URL=https://example.org/vcl/ .
+```
+
+Left unset it is `https://vcl.cheminfo.org/` — its own host, at the root of it — which is what
+every deployment does today. Note that a crawler only reads `robots.txt` from
+the root of a host, so a site mounted under a path is covered by whatever
+answers that root, not by the file the build writes.
+
 ## Environment variables
 
-| Variable       | Default                             | Used by                    | Description                                                                               |
-| -------------- | ----------------------------------- | -------------------------- | ----------------------------------------------------------------------------------------- |
-| `COMPOSE_FILE` | unset                               | `docker compose`           | Selects the deployment mode. Unset means `compose.yaml`.                                  |
-| `PORT`         | `10103`                             | every compose file         | Port the container serves on, and publishes for `compose.yaml`.                           |
-| `IMAGE_NAME`   | `ghcr.io/cheminfo/vcl.cheminfo.org` | every compose file         | Image the compose files run.                                                              |
-| `IMAGE_TAG`    | `latest`                            | every compose file         | Rewritten by the server's deploy script on each deploy and rollback — never edit by hand. |
-| `TUNNEL_TOKEN` | unset                               | `compose.cloudflared.yaml` | Cloudflare Tunnel connector token.                                                        |
+| Variable       | Default                             | Used by                                                                         | Description                                                                               |
+| -------------- | ----------------------------------- | ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `SITE_URL`     | `https://vcl.cheminfo.org/`         | Build time only: where the site will be served, origin and mount path together. |
+| `COMPOSE_FILE` | unset                               | `docker compose`                                                                | Selects the deployment mode. Unset means `compose.yaml`.                                  |
+| `PORT`         | `10103`                             | every compose file                                                              | Port the container serves on, and publishes for `compose.yaml`.                           |
+| `IMAGE_NAME`   | `ghcr.io/cheminfo/vcl.cheminfo.org` | every compose file                                                              | Image the compose files run.                                                              |
+| `IMAGE_TAG`    | `latest`                            | every compose file                                                              | Rewritten by the server's deploy script on each deploy and rollback — never edit by hand. |
+| `TUNNEL_TOKEN` | unset                               | `compose.cloudflared.yaml`                                                      | Cloudflare Tunnel connector token.                                                        |
 
 The Vite dev server port (`10104`, the host port plus one) is a constant in
 `vite.config.ts`; there is no env var for it.

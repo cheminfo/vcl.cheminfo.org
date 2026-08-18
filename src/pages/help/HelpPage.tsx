@@ -3,6 +3,7 @@ import type { ReactElement } from 'react';
 import { Fragment, useEffect, useSyncExternalStore } from 'react';
 
 import { GlossaryText } from '../../components/shared/GlossaryText.tsx';
+import { pathWithoutBase, withBase } from '../../state/site.ts';
 import { parseRoute } from '../../state/view.ts';
 
 import { GLOSSARY } from './data/glossary.ts';
@@ -33,7 +34,9 @@ export function HelpPage(): ReactElement {
   // address while it changes, so the back button walks the chapters too.
   useEffect(() => {
     function scrollToAddressedSection(): void {
-      const section = parseRoute(window.location.pathname).section;
+      const section = parseRoute(
+        pathWithoutBase(window.location.pathname),
+      ).section;
       if (section !== null) scrollToSection(section);
     }
     scrollToAddressedSection();
@@ -139,7 +142,7 @@ function GlossaryList(): ReactElement {
 function showSection(id: string): void {
   // The address keeps the chapter shareable; the scroll also has to happen
   // here, because pushing the address the page is already on fires no event.
-  window.history.pushState(null, '', `/help/${id}`);
+  window.history.pushState(null, '', withBase(`/help/${id}`));
   scrollToSection(id);
 }
 
