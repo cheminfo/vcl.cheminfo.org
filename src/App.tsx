@@ -5,13 +5,16 @@ import type { ReactElement } from 'react';
 import { useEffect } from 'react';
 import { startDocumentMeta } from 'react-cheminfo/core';
 import {
+  AboutPage,
   CiteButton,
   EcosystemButton,
   NavLink,
   SiteFooter,
   SiteHeader,
+  SiteMark,
 } from 'react-cheminfo/ui';
 
+import { ABOUT } from './about.ts';
 import type { HelpContent } from './components/shared/helpContent.tsx';
 import { helpTooltip } from './components/shared/helpContent.tsx';
 import { BuilderPage } from './pages/builder/BuilderPage.tsx';
@@ -126,15 +129,37 @@ export function App(): ReactElement {
         }}
         actions={
           <>
+            {/* About leads the utilities on every site of the family, and is a
+                real address rather than a dialog: a page is indexed, linkable
+                and printable. */}
+            <NavLink
+              item={{
+                id: 'about',
+                label: (
+                  <>
+                    <SiteMark siteId="vcl" size={14} />
+                    About
+                  </>
+                ),
+                href: withBase('/about'),
+                title: 'What vcl.cheminfo.org is, and how to cite it',
+                onSelect: () => setActiveTab('about'),
+              }}
+              active={activeTab === 'about'}
+            />
             <CiteButton reference={PAPER} />
             <EcosystemButton currentSiteId="vcl" />
           </>
         }
       />
-      <p className="app-tagline">
-        Combine a core carrying R groups with a set of fragments, then screen
-        the enumerated library on its predicted properties.
-      </p>
+      {/* The About draws the tagline in its own hero, so the shell does not
+          write it twice. */}
+      {activeTab === 'about' ? null : (
+        <p className="app-tagline">
+          Combine a core carrying R groups with a set of fragments, then screen
+          the enumerated library on its predicted properties.
+        </p>
+      )}
       <main className="app-body">{renderPage(activeTab)}</main>
       <SiteFooter siteId="vcl" />
     </div>
@@ -144,6 +169,7 @@ export function App(): ReactElement {
 function renderPage(tab: TabId): ReactElement {
   if (tab === 'examples') return <ExamplesPage />;
   if (tab === 'help') return <HelpPage />;
+  if (tab === 'about') return <AboutPage content={ABOUT} />;
   return <BuilderPage />;
 }
 

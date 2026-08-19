@@ -5,10 +5,18 @@ import { NUMERIC_PROPERTIES } from '../vcl/types.ts';
 
 import { withBase } from './site.ts';
 
-/** The top level tabs of the application. */
-export type TabId = 'builder' | 'examples' | 'help';
+/**
+ * The top level pages of the application. `about` is one of them and not a tab
+ * of the bar: it is a routed address, listed in the utilities on the right.
+ */
+export type TabId = 'builder' | 'examples' | 'help' | 'about';
 
-export const TAB_IDS: readonly TabId[] = ['builder', 'examples', 'help'];
+export const TAB_IDS: readonly TabId[] = [
+  'builder',
+  'examples',
+  'help',
+  'about',
+];
 
 /** What the user is currently looking at. Session only, never persisted. */
 export const view = {

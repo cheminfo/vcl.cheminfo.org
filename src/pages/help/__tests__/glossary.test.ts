@@ -53,10 +53,10 @@ test('every marker used by the help resolves to a glossary entry', () => {
   }
 
   expect(missing).toStrictEqual([]);
-  expect(marked).toBe(30);
+  expect(marked).toBe(29);
 });
 
-test('the help is made of the nine expected sections', () => {
+test('the help is made of the eight expected sections', () => {
   const ids: string[] = [];
   for (const section of HELP_SECTIONS) ids.push(section.id);
   expect(ids).toStrictEqual([
@@ -68,7 +68,6 @@ test('the help is made of the nine expected sections', () => {
     'download',
     'predicted-properties',
     'limits-and-caveats',
-    'credits',
   ]);
   expect(Object.keys(GLOSSARY)).toHaveLength(20);
 });

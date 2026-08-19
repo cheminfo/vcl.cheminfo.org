@@ -15,7 +15,7 @@
 
 import type { NoscriptRoute, RouteMeta } from 'react-cheminfo/core';
 
-/** The three tabs of the site, in the order the tab bar lists them. */
+/** The three tabs of the site, then the About every site of the family carries. */
 export const PAGE_ROUTES: readonly RouteMeta[] = [
   {
     path: '/',
@@ -35,6 +35,12 @@ export const PAGE_ROUTES: readonly RouteMeta[] = [
     description:
       'From drawing a core with its R groups to brushing the property plot: every step of building and screening a virtual combinatorial library, plus its glossary.',
   },
+  {
+    path: '/about',
+    title: 'About — what it is built on, and how to cite it',
+    description:
+      'What this virtual combinatorial library builder is, the paper its approach comes from, the open work it runs on, and where to report a problem.',
+  },
 ];
 
 /** What each page is linked as in the crawl path: its menu name, and what it is for. */
@@ -42,6 +48,7 @@ const NOSCRIPT_LABELS: Record<string, Pick<NoscriptRoute, 'short' | 'note'>> = {
   '/': { short: 'Builder', note: 'draw a core and enumerate the library' },
   '/examples': { short: 'Examples', note: 'ready-made libraries' },
   '/help': { short: 'Help', note: 'the manual and the glossary' },
+  '/about': { short: 'About', note: 'credits, citation and licence' },
 };
 
 /**

@@ -82,6 +82,7 @@ test('every page is titled and described on its own', () => {
     '/',
     '/examples',
     '/help',
+    '/about',
   ]);
 
   for (const page of PAGE_ROUTES) {

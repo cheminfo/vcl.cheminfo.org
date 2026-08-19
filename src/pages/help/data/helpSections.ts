@@ -80,14 +80,6 @@ export const HELP_SECTIONS = [
       'Your core and fragments are saved in the local storage of this browser only. Clearing the site data loses them, so use the downloads to keep a library.',
     ],
   },
-  {
-    id: 'credits',
-    title: 'Credits',
-    paragraphs: [
-      'The approach comes from Vanderveen J. R.; Patiny, L.; Chalifoux C. B.; Jessop M. J.; Jessop P. G. "A virtual screening approach to identifying the greenest compound for a task: application to switchable-hydrophilicity solvents" Green Chem. 2015, https://doi.org/10.1039/C5GC01022E.',
-      'This application replaces the older cheminfo visualizer view of the same name. It performs the same enumeration with the same [[OpenChemLib]] engine, on a page of its own.',
-    ],
-  },
 ] as const satisfies readonly HelpSection[];
 
 /** Anchor of one chapter, narrowed to the chapters that exist. */
