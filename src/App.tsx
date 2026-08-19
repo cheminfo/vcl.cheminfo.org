@@ -12,6 +12,7 @@ import {
   SiteFooter,
   SiteHeader,
   SiteMark,
+  SiteTheme,
 } from 'react-cheminfo/ui';
 
 import { ABOUT } from './about.ts';
@@ -110,6 +111,7 @@ export function App(): ReactElement {
 
   return (
     <div className="app">
+      <SiteTheme siteId="vcl" />
       <SiteHeader
         siteId="vcl"
         nav={nav}

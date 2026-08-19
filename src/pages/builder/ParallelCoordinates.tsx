@@ -58,7 +58,9 @@ export interface ParallelCoordinatesProps {
 }
 
 const DEFAULT_WIDTH = 900;
-const AXIS_COLOR = '#5f6b7c';
+// Written as a declaration rather than a presentation attribute: `var()` is
+// resolved in CSS, and an SVG attribute is not CSS.
+const AXIS_COLOR = 'var(--text-muted, #5b6875)';
 const TOOLTIP_OFFSET = 14;
 const TOOLTIP_WIDTH = 150;
 const OVERLAY: CSSProperties = { position: 'absolute', inset: 0 };
@@ -269,7 +271,7 @@ export function ParallelCoordinates(props: ParallelCoordinatesProps) {
         <g
           transform={`translate(${PLOT_MARGIN.left},${PLOT_MARGIN.top})`}
           fontSize={9}
-          fill={AXIS_COLOR}
+          style={{ fill: AXIS_COLOR }}
           textAnchor="middle"
         >
           {layouts.map((layout) => (
@@ -278,10 +280,10 @@ export function ParallelCoordinates(props: ParallelCoordinatesProps) {
               className="parallel-coordinates-axis"
               transform={`translate(${layout.x},0)`}
             >
-              <line y2={innerHeight} stroke={AXIS_COLOR} />
+              <line y2={innerHeight} style={{ stroke: AXIS_COLOR }} />
               {buildTicks(layout, innerHeight).map((tick) => (
                 <g key={tick.value} transform={`translate(0,${tick.y})`}>
-                  <line x1={-4} stroke={AXIS_COLOR} />
+                  <line x1={-4} style={{ stroke: AXIS_COLOR }} />
                   <text x={-7} dy="0.32em" textAnchor="end">
                     {tick.text}
                   </text>

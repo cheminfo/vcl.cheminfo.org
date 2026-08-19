@@ -22,8 +22,12 @@ export interface Highlight {
 
 /** Colour of the molecule the pointer is over, in the plot or in the table. */
 export const HOVER_COLOR = '#1c2127';
-/** Colour of the molecule selected in the table. */
-export const SELECTION_COLOR = '#2d72d2';
+/**
+ * Colour of the molecule selected in the table. A canvas takes a colour, not
+ * a CSS declaration, so it cannot read `--accent` and the value is written
+ * out beside the hover colour it is drawn against.
+ */
+export const SELECTION_COLOR = '#2d72d2'; // tokens-ok: canvas
 
 const PALETTE_STEPS = 120;
 // Overlapping segments of one stroked path accumulate alpha, so a translucent

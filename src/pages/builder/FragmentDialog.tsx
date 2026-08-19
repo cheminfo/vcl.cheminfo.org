@@ -11,8 +11,8 @@ import type { Fragment } from '../../vcl/types.ts';
 import { FragmentEditor } from './FragmentEditor.tsx';
 import { FRAGMENTS_PANEL_HELP } from './tooltips.ts';
 
-/** Blueprint's primary blue, used as the header band of the dialog. */
-const HEADER_COLOR = '#2d72d2';
+/** The site's own colour, as the header band of the dialog. */
+const HEADER_COLOR = 'var(--accent, #2d72d2)';
 
 export interface FragmentDialogProps {
   /**

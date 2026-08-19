@@ -5,16 +5,8 @@
 @import 'react-cheminfo/styles/chrome.css';
 
 :root {
-  /* The two colours this site owns: the core, and the fragments hung off it. */
-  --brand: #2d72d2;
-  --brand-alt: #eb6847;
-
-  /* The mark's orange reaches 3.2:1 on white — short of what text needs, so set
-     text in a darkened one (5.9:1) of the same hue. */
-  --brand-alt-text: #9a3412;
-
-  --accent: var(--brand);
-
+  /* The two colours this site owns come from its record in the family, put on
+     the page by <SiteTheme siteId="vcl" />. */
   color-scheme: light;
 }
 
@@ -75,11 +67,11 @@ body {
   margin-top: 0;
 }
 .help-icon {
-  color: #5f6b7c;
+  color: var(--text-muted);
   cursor: help;
 }
 .help-icon:hover {
-  color: #2d72d2;
+  color: var(--accent);
 }
 
 /* The one tooltip of the application. react-science lays the body out; what is
@@ -95,7 +87,9 @@ body {
   order: 1;
   margin: 0;
   padding-top: 5px;
-  color: #d3d8de;
+  /* Ink on Blueprint's dark popover, paired with the grey of the list below
+     it. The family's light tokens are surfaces, not ink. */
+  color: #d3d8de; /* tokens-ok */
   font-size: 12px;
   font-weight: 400;
   line-height: 1.45;
@@ -206,11 +200,11 @@ body {
   cursor: pointer;
 }
 .fragment-row[data-selected='true'] {
-  border-color: #2d72d2;
-  box-shadow: inset 0 0 0 1px #2d72d2;
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
 }
 .fragment-row__index {
-  color: #5f6b7c;
+  color: var(--text-muted);
   font-size: 12px;
   text-align: right;
 }
@@ -220,10 +214,10 @@ body {
   justify-content: center;
   height: 76px;
   border-radius: 2px;
-  background: #f6f7f9;
+  background: var(--surface-sunken);
 }
 .fragment-row__empty {
-  color: #5f6b7c;
+  color: var(--text-muted);
   font-size: 12px;
 }
 .fragment-row__main {
@@ -279,7 +273,7 @@ body {
   justify-content: center;
   min-height: 96px;
   border-radius: 2px;
-  background: #f6f7f9;
+  background: var(--surface-sunken);
 }
 .fragment-editor__controls {
   display: flex;
@@ -317,7 +311,7 @@ body {
 .generate-outcome::before {
   content: '·';
   margin-right: 12px;
-  color: #5f6b7c;
+  color: var(--text-muted);
 }
 .generate-progress {
   display: flex;
@@ -329,7 +323,7 @@ body {
   flex: 1 1 auto;
 }
 .generate-progress-count {
-  color: #5f6b7c;
+  color: var(--text-muted);
   font-size: 12px;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -364,7 +358,7 @@ body {
   overflow-x: auto;
 }
 .parallel-coordinates-axis text {
-  fill: #5f6b7c;
+  fill: var(--text-muted);
   font-size: 10px;
 }
 /* The axis labels are HTML rather than SVG text, so each can carry a tooltip.
@@ -384,7 +378,7 @@ body {
   pointer-events: auto;
 }
 .parallel-coordinates-label:hover {
-  color: #2d72d2;
+  color: var(--accent);
 }
 .parallel-coordinates-tooltip {
   position: absolute;
@@ -398,7 +392,8 @@ body {
   box-shadow:
     0 0 0 1px rgb(17 20 24 / 10%),
     0 10px 15px -3px rgb(0 0 0 / 10%);
-  color: #f6f7f9;
+  /* Ink on the dark plate above, which is Blueprint's popover grey. */
+  color: #f6f7f9; /* tokens-ok */
   font-size: 11px;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -422,7 +417,7 @@ body {
   gap: 8px;
   padding: 4px 8px;
   border-bottom: 1px solid rgb(17 20 24 / 15%);
-  color: #5f6b7c;
+  color: var(--text-muted);
   font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
@@ -460,7 +455,7 @@ body {
   cursor: pointer;
 }
 .molecule-row:hover {
-  background: #f6f7f9;
+  background: var(--surface-sunken);
 }
 .molecule-row[data-selected='true'] {
   background: #d9e5f7;
@@ -486,13 +481,13 @@ body {
 }
 .panel-hint {
   margin: 6px 0;
-  color: #5f6b7c;
+  color: var(--text-muted);
   font-size: 12px;
 }
 
 /* Glossary terms, in help prose and anywhere else GlossaryText is used */
 .glossary-term {
-  border-bottom: 1px dashed #2d72d2;
+  border-bottom: 1px dashed var(--accent);
   color: #1c6e42;
   cursor: help;
 }
@@ -505,7 +500,8 @@ body {
 }
 .glossary-tooltip-body p {
   margin: 5px 0 0;
-  color: #d3d8de;
+  /* Ink on Blueprint's dark popover, as in the help tooltip above. */
+  color: #d3d8de; /* tokens-ok */
   font-size: 12px;
   line-height: 1.45;
 }
@@ -654,7 +650,7 @@ body {
   justify-content: center;
   min-height: 140px;
   border-radius: 2px;
-  background: #f6f7f9;
+  background: var(--surface-sunken);
 }
 
 /* The family strip is drawn by the shared chrome; the page only sets it off
