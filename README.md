@@ -42,6 +42,7 @@ one).
 
 ```sh
 npm run test     # unit tests, type-check, eslint and prettier
+npm run test-e2e # browser tests, which start the dev server themselves
 npm run build    # production bundle into dist/
 ```
 

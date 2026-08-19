@@ -5,7 +5,7 @@ import ts from 'eslint-config-zakodium/ts';
 import unicorn from 'eslint-config-zakodium/unicorn';
 
 export default defineConfig(
-  globalIgnores(['coverage', 'dist']),
+  globalIgnores(['coverage', 'dist', 'playwright-report', 'test-results']),
   ts,
   unicorn,
   react,

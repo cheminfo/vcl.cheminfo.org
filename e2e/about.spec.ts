@@ -1,0 +1,134 @@
+/**
+ * The About page: what the site is, what it can do, what it borrows, how to
+ * cite it and under which licence.
+ *
+ * Every string asserted here is a string of `src/about.ts`, so the page and the
+ * record it is drawn from cannot drift apart — and a section the shared
+ * `AboutPage` stops rendering is caught rather than silently lost.
+ */
+
+import { expect, test } from '@playwright/test';
+
+/** The six things `ABOUT.can` says a visitor can do here. */
+const CAN = [
+  'Draw a core with up to four R groups, and the fragments each one accepts.',
+  'Enumerate every combination in a Web Worker, duplicate structures dropped.',
+  'Read eight predicted properties per molecule, the Lipinski four included.',
+  'Brush any axis of the parallel coordinates plot to filter the library.',
+  'Download the filtered set as SDF, SMILES or CSV.',
+  'Open one of four ready-made libraries to see the whole flow at once.',
+];
+
+/** Every borrowed work `ABOUT.credits` names, in the order it names them. */
+const CREDIT_NAMES = [
+  'OpenChemLib',
+  'openchemlib-utils',
+  'react-ocl',
+  'react-mf',
+  'Blueprint',
+  'react-science',
+  'react-cheminfo',
+  'React',
+  'Vite',
+];
+
+/** The licence each of those works comes under, in the same order. */
+const CREDIT_LICENCES = [
+  'BSD-3-Clause',
+  'MIT',
+  'MIT',
+  'MIT',
+  'Apache-2.0',
+  'MIT',
+  'MIT',
+  'MIT',
+  'MIT',
+];
+
+test('the About answers on its own address, naming the site and what it is for', async ({
+  page,
+}) => {
+  await page.goto('/about');
+
+  await expect(page).toHaveTitle(
+    'About — what it is built on, and how to cite it — vcl.cheminfo.org',
+  );
+  const hero = page.locator('.about-hero');
+  await expect(hero.locator('h1')).toHaveText('vcl.cheminfo');
+  await expect(hero).toContainText(
+    'Combine a core and fragments into a screened library.',
+  );
+  await expect(hero).toContainText(
+    'Draw a core carrying R groups and the fragments that may fill them, enumerate every product, and screen the library on predicted properties.',
+  );
+});
+
+test('the sections are the five the family writes, in the family order', async ({
+  page,
+}) => {
+  await page.goto('/about');
+
+  await expect(page.locator('.about-page h2')).toHaveText([
+    'What you can do here',
+    'Built on',
+    'How to cite',
+    'Licence and source',
+    'Found a problem?',
+  ]);
+});
+
+test('what you can do here is the six things the record lists', async ({
+  page,
+}) => {
+  await page.goto('/about');
+
+  await expect(page.locator('.about-can li')).toHaveText(CAN);
+});
+
+test('every borrowed work is credited, under its own licence', async ({
+  page,
+}) => {
+  await page.goto('/about');
+
+  await expect(page.locator('.about-credits li a')).toHaveText(CREDIT_NAMES);
+  // Naming the licence beside the work is what makes the list a credit rather
+  // than a list of links, and it is the part a site forgets when it writes its
+  // own page.
+  await expect(
+    page.locator('.about-credits li > span:nth-of-type(1)'),
+  ).toHaveText(CREDIT_LICENCES);
+});
+
+test('the paper the method comes from is cited, with its DOI', async ({
+  page,
+}) => {
+  await page.goto('/about');
+
+  const cite = page.locator('.about-cite');
+  await expect(cite).toContainText('The virtual screening approach');
+  await expect(cite).toContainText(
+    'A virtual screening approach to identifying the greenest compound for a task: application to switchable-hydrophilicity solvents',
+  );
+  await expect(cite).toContainText('Green Chem. 2015, 17, 5182–5188');
+  await expect(cite.getByRole('link')).toHaveAttribute(
+    'href',
+    'https://doi.org/10.1039/C5GC01022E',
+  );
+});
+
+test('the licence and the sources are named, and the issue tracker with them', async ({
+  page,
+}) => {
+  await page.goto('/about');
+
+  const licence = page.locator('.about-licence');
+  await expect(licence).toContainText('MIT, © cheminfo.');
+  await expect(licence.getByRole('link')).toHaveAttribute(
+    'href',
+    'https://github.com/cheminfo/vcl.cheminfo.org',
+  );
+  await expect(page.locator('.about-issues').getByRole('link')).toHaveAttribute(
+    'href',
+    'https://github.com/cheminfo/vcl.cheminfo.org/issues',
+  );
+});

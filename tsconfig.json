@@ -4,5 +4,5 @@
     "noEmit": true,
     "noUncheckedIndexedAccess": true
   },
-  "include": ["src", "vite*.ts"]
+  "include": ["src", "e2e", "vite*.ts", "playwright.config.ts"]
 }

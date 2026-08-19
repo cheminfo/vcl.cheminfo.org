@@ -8,3 +8,7 @@ dist
 .claude
 *.log
 coverage
+
+# Playwright
+playwright-report
+test-results
