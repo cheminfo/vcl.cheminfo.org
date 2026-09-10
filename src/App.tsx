@@ -114,6 +114,7 @@ export function App(): ReactElement {
       <SiteTheme siteId="vcl" />
       <SiteHeader
         siteId="vcl"
+        width="full"
         nav={nav}
         activeId={activeTab}
         homeHref={withBase('/')}
@@ -163,7 +164,7 @@ export function App(): ReactElement {
         </p>
       )}
       <main className="app-body">{renderPage(activeTab)}</main>
-      <SiteFooter siteId="vcl" />
+      <SiteFooter siteId="vcl" width="full" />
     </div>
   );
 }
