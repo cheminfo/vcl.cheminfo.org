@@ -1,22 +1,11 @@
-/** One term of the inline contextual help, shown in a tooltip and in the list. */
-export interface GlossaryEntry {
-  title: string;
-  /** One short paragraph. */
-  summary: string;
-  examples: Array<{ code: string; note: string }>;
-}
-
-/** One piece of prose: plain text, or a marked term with its definition. */
-export type GlossarySegment =
-  | { kind: 'text'; text: string }
-  | { kind: 'term'; text: string; entry: GlossaryEntry | null };
+import type { Glossary } from 'react-cheminfo/core';
 
 /**
  * Every term the help prose may mark with `[[term]]`, keyed in lower case. A
  * marker whose key is absent degrades to plain text, so prose may be written
  * before its entry exists.
  */
-export const GLOSSARY: Record<string, GlossaryEntry> = {
+export const GLOSSARY: Glossary = {
   core: {
     title: 'Core',
     summary:
@@ -140,39 +129,3 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
     examples: [{ code: 'Molecule.fromSmiles(s)', note: 'Its entry point.' }],
   },
 };
-
-/**
- * Cut prose into plain pieces and `[[term]]` markers, resolving every marker
- * against the glossary in lower case. An unknown marker keeps its inner text
- * and resolves to a `null` entry, so the brackets are never shown.
- * @param text - Prose that may contain markers.
- * @returns The segments, in reading order.
- */
-export function splitGlossaryText(text: string): GlossarySegment[] {
-  const segments: GlossarySegment[] = [];
-  const marker = /\[\[(?<term>[^\]]+)]]/g;
-  let cursor = 0;
-
-  for (
-    let match = marker.exec(text);
-    match !== null;
-    match = marker.exec(text)
-  ) {
-    const term = match.groups?.term;
-    if (term === undefined) continue;
-    if (match.index > cursor) {
-      segments.push({ kind: 'text', text: text.slice(cursor, match.index) });
-    }
-    segments.push({
-      kind: 'term',
-      text: term,
-      entry: GLOSSARY[term.toLowerCase()] ?? null,
-    });
-    cursor = match.index + match[0].length;
-  }
-
-  if (cursor < text.length) {
-    segments.push({ kind: 'text', text: text.slice(cursor) });
-  }
-  return segments;
-}

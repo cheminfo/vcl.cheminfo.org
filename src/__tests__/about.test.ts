@@ -1,4 +1,8 @@
-import { aboutProblems, resolveAbout } from 'react-cheminfo/core';
+import {
+  PLATFORM_WORK,
+  aboutProblems,
+  resolveAbout,
+} from 'react-cheminfo/core';
 import { expect, test } from 'vitest';
 
 import { ABOUT } from '../about.ts';
@@ -29,19 +33,20 @@ test('every borrowed work the site runs on is named, and named once', () => {
   expect(new Set(ABOUT.credits).size).toBe(ABOUT.credits.length);
 });
 
-test('the paper the manual credited is now the work the page cites', () => {
-  expect(ABOUT.cite).toHaveLength(1);
-  expect(ABOUT.cite?.[0]?.reference).toBe(PAPER);
+test('the page cites the platform paper, then the Vanderveen paper', () => {
+  expect(ABOUT.cite).toHaveLength(2);
+  expect(ABOUT.cite?.[0]).toBe(PLATFORM_WORK);
+  expect(ABOUT.cite?.[1]?.reference).toBe(PAPER);
   expect(PAPER.doi).toBe('10.1039/C5GC01022E');
   expect(PAPER.journalAbbreviation).toBe('Green Chem.');
   expect(PAPER.year).toBe(2015);
 });
 
-test('the visualizer view it replaces survives from the manual chapter', () => {
+test('the approach paragraph names the method and its engine', () => {
   const [approach, browser] = ABOUT.paragraphs ?? [];
 
   expect(approach).toContain('Vanderveen');
-  expect(approach).toContain('cheminfo visualizer view');
+  expect(approach).toContain('OpenChemLib');
   expect(browser).toContain('nothing is uploaded');
 });
 

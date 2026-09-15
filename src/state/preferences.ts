@@ -17,7 +17,7 @@ const ALL_PROPERTY_KEYS: readonly NumericPropertyKey[] = NUMERIC_PROPERTIES.map(
  * The library the user is building plus their display choices. Persisted under
  * a single localStorage key so a reload never loses the drawings.
  */
-export const preferences = persistBucket('vcl:preferences:v1', {
+export const preferences = persistBucket('vcl:preferences', {
   library: {
     coreMolfile: signal<string>(DEFAULT_CORE_MOLFILE),
     fragments: signal<Fragment[]>(createDefaultFragments()),

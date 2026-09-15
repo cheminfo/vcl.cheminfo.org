@@ -9,6 +9,7 @@
  */
 
 import type { AboutContent, CitedWork } from 'react-cheminfo/core';
+import { PLATFORM_WORK } from 'react-cheminfo/core';
 
 import { PAPER } from './paper.ts';
 
@@ -32,7 +33,7 @@ export const ABOUT: AboutContent = {
     'Open one of four ready-made libraries to see the whole flow at once.',
   ],
   paragraphs: [
-    'The approach is the virtual screening of Vanderveen et al., cited below: enumerate a library around a core, then rank it on predicted properties instead of measuring it. This page replaces the cheminfo visualizer view of the same name, running the same enumeration with the same OpenChemLib engine at an address of its own.',
+    'The approach is the virtual screening of Vanderveen et al., cited below: enumerate a library around a core, then rank it on predicted properties instead of measuring it. The enumeration and the predictions run on the OpenChemLib engine.',
     'The drawing, the enumeration and the property prediction all run in your browser, and nothing is uploaded. Your core and your fragments are kept in this browser alone, so clearing the site data loses them: download a library you want to keep.',
   ],
   credits: [
@@ -46,5 +47,5 @@ export const ABOUT: AboutContent = {
     'react',
     'vite',
   ],
-  cite: [SCREENING_WORK],
+  cite: [PLATFORM_WORK, SCREENING_WORK],
 };

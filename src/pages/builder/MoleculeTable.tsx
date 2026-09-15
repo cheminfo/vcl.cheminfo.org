@@ -4,8 +4,8 @@ import { useSignals } from '@preact/signals-react/runtime';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import type { CSSProperties, ReactElement } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { Structure } from 'react-cheminfo/structure';
 import { MF } from 'react-mf';
-import { IdcodeSvgRenderer } from 'react-ocl';
 
 import { HelpTooltip } from '../../components/shared/HelpTooltip.tsx';
 import { filteredMolecules } from '../../state/data.ts';
@@ -151,12 +151,7 @@ export function MoleculeTable(): ReactElement {
               }}
             >
               <span className={Classes.TEXT_MUTED}>{item.index + 1}</span>
-              <IdcodeSvgRenderer
-                idcode={molecule.idCode}
-                width={180}
-                height={80}
-                autoCrop
-              />
+              <Structure idCode={molecule.idCode} width={180} height={80} />
               <MF mf={molecule.mf} />
               {columns.map((key) => (
                 <span key={key} className="molecule-cell-number">

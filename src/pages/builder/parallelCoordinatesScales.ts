@@ -1,3 +1,10 @@
+import {
+  DEFAULT_COLOR_SCALE_ID,
+  colorAt,
+  positionInRange,
+  resolveColorScale,
+} from 'react-cheminfo/core';
+
 import type { GeneratedMolecule, NumericPropertyKey } from '../../vcl/types.ts';
 import { NUMERIC_PROPERTY_BY_KEY } from '../../vcl/types.ts';
 
@@ -23,9 +30,14 @@ export interface AxisTick {
 /** Space kept around the drawing area for the labels and the ticks. */
 export const PLOT_MARGIN = { top: 26, right: 54, bottom: 22, left: 54 };
 
+/**
+ * The ramp the plot reads the coloured property with. Viridis, the family's
+ * default, rather than a hue sweep: it is the one ramp that survives both a
+ * greyscale print and the reader who does not separate red from green.
+ */
+export const PLOT_COLOR_SCALE = resolveColorScale(DEFAULT_COLOR_SCALE_ID).scale;
+
 const DEGENERATE_PADDING = 0.5;
-const MAXIMUM_HUE = 360;
-const HUE_SPAN = 120;
 const TICK_COUNT = 5;
 
 /**
@@ -91,18 +103,14 @@ export function yToValue(
 }
 
 /**
- * `hsl()` colour for a value, red at the minimum through to blue at the maximum.
+ * Colour for a value, read off the plot's ramp between the two bounds.
  * @param value - Data value to colour.
- * @param min - Value shown red.
- * @param max - Value shown blue.
- * @returns A CSS `hsl()` colour string.
+ * @param min - Value shown at the low end of the ramp.
+ * @param max - Value shown at its high end.
+ * @returns The colour, as `#rrggbb`.
  */
 export function valueToColor(value: number, min: number, max: number): string {
-  const span = max - min;
-  let ratio = span === 0 ? 0 : (value - min) / span;
-  if (Number.isNaN(ratio) || ratio < 0) ratio = 0;
-  else if (ratio > 1) ratio = 1;
-  return `hsl(${Math.round(MAXIMUM_HUE - ratio * HUE_SPAN)}, 65%, 65%)`;
+  return colorAt(PLOT_COLOR_SCALE, positionInRange(value, min, max));
 }
 
 /**

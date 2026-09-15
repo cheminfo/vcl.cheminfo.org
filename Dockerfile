@@ -29,6 +29,9 @@ ENV SERVER_REDIRECT_TRAILING_SLASH=false
 # Overridden by compose with PORT, so the deploy script can probe the same port in
 # every deployment mode.
 ENV SERVER_PORT=10103
+# A /health endpoint that answers 200 and writes no access-log line, which is
+# what the compose healthcheck and the server's deploy script probe.
+ENV SERVER_HEALTH=true
 EXPOSE 10103
 
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

@@ -2,13 +2,14 @@ import { ButtonGroup, Classes } from '@blueprintjs/core';
 import { useSignals } from '@preact/signals-react/runtime';
 import type { ReactElement } from 'react';
 import { useState } from 'react';
+import { downloadText, formatInteger, pluralize } from 'react-cheminfo/core';
 import { Button } from 'react-science/ui';
 
 import { HelpTooltip } from '../../components/shared/HelpTooltip.tsx';
 import type { HelpContent } from '../../components/shared/helpContent.tsx';
 import { helpTooltip } from '../../components/shared/helpContent.tsx';
 import { filteredMolecules } from '../../state/data.ts';
-import { downloadText, toCSV, toSDF, toSmilesList } from '../../vcl/export.ts';
+import { toCSV, toSDF, toSmilesList } from '../../vcl/export.ts';
 import type { GeneratedMolecule } from '../../vcl/types.ts';
 import { helpLink } from '../help/data/helpSections.ts';
 
@@ -32,7 +33,7 @@ export function DownloadBar(): ReactElement {
       await new Promise<void>((resolve) => {
         setTimeout(resolve, 0);
       });
-      downloadText(format.filename, format.mimeType, format.build(molecules));
+      downloadText(format.build(molecules), format.filename, format.mimeType);
     } finally {
       setBusyFormatId(null);
     }
@@ -128,7 +129,7 @@ const DOWNLOAD_FORMATS: readonly DownloadFormat[] = [
 
 function downloadScopeHelp(count: number): HelpContent {
   return {
-    title: `${count.toLocaleString('en-US')} molecules`,
+    title: `${formatInteger(count)} ${pluralize(count, 'molecule')}`,
     description:
       'A download holds exactly what the brushes of the plot keep, never the whole library. Clear them first to save everything.',
     link: helpLink('download'),

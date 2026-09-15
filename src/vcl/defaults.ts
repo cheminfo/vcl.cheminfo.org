@@ -3,8 +3,7 @@ import type { Fragment, RGroupKey } from './types.ts';
 import { R_GROUP_KEYS } from './types.ts';
 
 /**
- * Pyridine bearing R1 to R4, the core used by the original
- * cheminfo visualizer view this application replaces.
+ * Pyridine bearing R1 to R4, the core the builder opens on.
  */
 export const DEFAULT_CORE_MOLFILE = `
 Actelion Java MolfileCreator 1.0

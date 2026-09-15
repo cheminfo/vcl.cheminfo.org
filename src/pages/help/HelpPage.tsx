@@ -1,10 +1,10 @@
 import { Button, H4, H5 } from '@blueprintjs/core';
 import type { ReactElement } from 'react';
 import { Fragment, useEffect, useSyncExternalStore } from 'react';
+import { GlossaryText } from 'react-cheminfo/ui';
 
-import { GlossaryText } from '../../components/shared/GlossaryText.tsx';
 import { pathWithoutBase, withBase } from '../../state/site.ts';
-import { parseRoute } from '../../state/view.ts';
+import { router } from '../../state/view.ts';
 
 import { GLOSSARY } from './data/glossary.ts';
 import { HELP_SECTIONS } from './data/helpSections.ts';
@@ -34,10 +34,10 @@ export function HelpPage(): ReactElement {
   // address while it changes, so the back button walks the chapters too.
   useEffect(() => {
     function scrollToAddressedSection(): void {
-      const section = parseRoute(
+      const chapter = router.parse(
         pathWithoutBase(window.location.pathname),
-      ).section;
-      if (section !== null) scrollToSection(section);
+      ).id;
+      if (chapter !== null) scrollToSection(chapter);
     }
     scrollToAddressedSection();
     window.addEventListener('popstate', scrollToAddressedSection);
@@ -71,7 +71,7 @@ export function HelpPage(): ReactElement {
             <H4>{section.title}</H4>
             {section.paragraphs.map((paragraph) => (
               <p key={paragraph}>
-                <GlossaryText text={paragraph} />
+                <GlossaryText text={paragraph} glossary={GLOSSARY} />
               </p>
             ))}
           </section>

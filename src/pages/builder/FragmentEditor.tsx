@@ -1,8 +1,9 @@
 import { Callout, Classes, Code, InputGroup } from '@blueprintjs/core';
 import type { KeyboardEvent, ReactElement } from 'react';
 import { useState } from 'react';
-import type { CanvasEditorOnChangeMolecule } from 'react-ocl';
-import { CanvasMoleculeEditor, MolfileSvgRenderer } from 'react-ocl';
+import type { StructureEditorChange } from 'react-cheminfo/structure';
+import { StructureEditor } from 'react-cheminfo/structure';
+import { MolfileSvgRenderer } from 'react-ocl';
 
 import { HelpTooltip } from '../../components/shared/HelpTooltip.tsx';
 import {
@@ -13,6 +14,10 @@ import type { Fragment, FragmentInfo, RGroupKey } from '../../vcl/types.ts';
 
 import { FragmentTargets } from './FragmentTargets.tsx';
 import { FRAGMENT_SMILES_HELP } from './tooltips.ts';
+
+// The shortest the drawing area is ever drawn; the editor raises it further
+// when its own tool palette needs more room than that.
+const EDITOR_MIN_HEIGHT = 220;
 
 /** What the uncontrolled canvas editor was last loaded with. */
 interface EditorSeed {
@@ -62,13 +67,12 @@ export function FragmentEditor(props: FragmentEditorProps): ReactElement {
     if (event.key === 'Enter') commitName();
   }
 
-  function handleChange(event: CanvasEditorOnChangeMolecule) {
-    const drawn = event.getMolfile();
-    const molfile = normalizeFragmentMolfile(drawn);
+  function handleChange(change: StructureEditorChange) {
+    const molfile = normalizeFragmentMolfile(change.molfile);
     onChange({ ...fragment, molfile });
     // Reloading the editor is what puts the `R` back under the user's cursor,
     // so only do it when the drawing really had to be repaired.
-    if (molfile !== drawn) {
+    if (molfile !== change.molfile) {
       setSeed((current) => ({ revision: current.revision + 1, molfile }));
     }
   }
@@ -89,16 +93,14 @@ export function FragmentEditor(props: FragmentEditorProps): ReactElement {
 
   return (
     <div className="fragment-editor">
-      <div className="fragment-editor__draw">
-        <CanvasMoleculeEditor
-          key={seed.revision}
-          inputFormat="molfile"
-          inputValue={seed.molfile}
-          width="100%"
-          height={220}
-          onChange={handleChange}
-        />
-      </div>
+      <StructureEditor
+        inputFormat="molfile"
+        value={seed.molfile}
+        revision={seed.revision}
+        minHeight={EDITOR_MIN_HEIGHT}
+        debounce={0}
+        onChange={handleChange}
+      />
       <div className="fragment-editor__preview">
         {fragment.molfile.trim() === '' ? (
           <span className={Classes.TEXT_MUTED}>Draw the fragment first.</span>

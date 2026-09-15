@@ -1,53 +1,20 @@
+import { parseGlossaryMarkers } from 'react-cheminfo/core';
 import { expect, test } from 'vitest';
 
-import { GLOSSARY, splitGlossaryText } from '../data/glossary.ts';
+import { GLOSSARY } from '../data/glossary.ts';
 import { HELP_SECTIONS } from '../data/helpSections.ts';
-
-test('a marked paragraph splits into text and resolved terms', () => {
-  const core = GLOSSARY.core;
-  const rGroup = GLOSSARY['r group'];
-
-  expect(
-    splitGlossaryText(
-      'The [[core]] holds [[R group]] atoms, a [[widget]] not.',
-    ),
-  ).toStrictEqual([
-    { kind: 'text', text: 'The ' },
-    { kind: 'term', text: 'core', entry: core },
-    { kind: 'text', text: ' holds ' },
-    { kind: 'term', text: 'R group', entry: rGroup },
-    { kind: 'text', text: ' atoms, a ' },
-    { kind: 'term', text: 'widget', entry: null },
-    { kind: 'text', text: ' not.' },
-  ]);
-});
-
-test('prose without a marker stays a single text segment', () => {
-  expect(splitGlossaryText('No marker here at all.')).toStrictEqual([
-    { kind: 'text', text: 'No marker here at all.' },
-  ]);
-});
-
-test('a marker resolves whatever its casing', () => {
-  expect(splitGlossaryText('[[OpenChemLib]]')).toStrictEqual([
-    { kind: 'term', text: 'OpenChemLib', entry: GLOSSARY.openchemlib },
-  ]);
-  expect(splitGlossaryText('[[PSA]] and [[psa]]')).toStrictEqual([
-    { kind: 'term', text: 'PSA', entry: GLOSSARY.psa },
-    { kind: 'text', text: ' and ' },
-    { kind: 'term', text: 'psa', entry: GLOSSARY.psa },
-  ]);
-});
 
 test('every marker used by the help resolves to a glossary entry', () => {
   const missing: string[] = [];
   let marked = 0;
   for (const section of HELP_SECTIONS) {
     for (const paragraph of section.paragraphs) {
-      for (const segment of splitGlossaryText(paragraph)) {
+      for (const segment of parseGlossaryMarkers(paragraph)) {
         if (segment.kind !== 'term') continue;
         marked++;
-        if (segment.entry === null) missing.push(segment.text);
+        // `parseGlossaryMarkers` already lowercases the term, which is how the
+        // glossary is keyed.
+        if (!Object.hasOwn(GLOSSARY, segment.term)) missing.push(segment.text);
       }
     }
   }

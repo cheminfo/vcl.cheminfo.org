@@ -1,6 +1,7 @@
 import { Callout, Card, H5, ProgressBar } from '@blueprintjs/core';
 import { useSignals } from '@preact/signals-react/runtime';
 import type { ReactElement } from 'react';
+import { formatInteger } from 'react-cheminfo/core';
 import { Button } from 'react-science/ui';
 
 import { HelpIcon } from '../../components/shared/HelpIcon.tsx';
@@ -119,8 +120,4 @@ export function GeneratePanel(): ReactElement {
       ) : null}
     </Card>
   );
-}
-
-function formatInteger(value: number): string {
-  return value.toLocaleString('en-US');
 }

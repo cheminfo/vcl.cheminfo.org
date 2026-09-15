@@ -3,61 +3,77 @@ import { expect, test } from 'vitest';
 
 import { HELP_SECTIONS, helpLink } from '../../pages/help/data/helpSections.ts';
 import { PAGE_ROUTES } from '../routes.ts';
-import {
-  TAB_IDS,
-  formatRoute,
-  parseRoute,
-  pathFromLegacyHash,
-} from '../view.ts';
+import { TAB_IDS, pathFromLegacyHash, router } from '../view.ts';
 
 test('a bare tab address addresses that tab and no section', () => {
-  expect(parseRoute('/help')).toStrictEqual({ tab: 'help', section: null });
-  expect(parseRoute('/examples')).toStrictEqual({
+  expect(router.parse('/help')).toStrictEqual({
+    tab: 'help',
+    id: null,
+    params: {},
+  });
+  expect(router.parse('/examples')).toStrictEqual({
     tab: 'examples',
-    section: null,
+    id: null,
+    params: {},
   });
 });
 
 test('an empty or unknown address falls back to the builder', () => {
-  expect(parseRoute('')).toStrictEqual({ tab: 'builder', section: null });
-  expect(parseRoute('/')).toStrictEqual({ tab: 'builder', section: null });
-  expect(parseRoute('/nowhere')).toStrictEqual({
+  expect(router.parse('')).toStrictEqual({
     tab: 'builder',
-    section: null,
+    id: null,
+    params: {},
+  });
+  expect(router.parse('/')).toStrictEqual({
+    tab: 'builder',
+    id: null,
+    params: {},
+  });
+  expect(router.parse('/nowhere')).toStrictEqual({
+    tab: 'builder',
+    id: null,
+    params: {},
   });
 });
 
 test('the link of a tooltip addresses its help chapter', () => {
   expect(helpLink('draw-the-core')).toBe('/help/draw-the-core');
-  expect(parseRoute(helpLink('draw-the-core'))).toStrictEqual({
+  expect(router.parse(helpLink('draw-the-core'))).toStrictEqual({
     tab: 'help',
-    section: 'draw-the-core',
+    id: 'draw-the-core',
+    params: {},
   });
 });
 
 test('every help chapter is reachable through its link', () => {
   for (const section of HELP_SECTIONS) {
-    const route = parseRoute(helpLink(section.id));
+    const route = router.parse(helpLink(section.id));
 
     expect(route.tab).toBe('help');
-    expect(route.section).toBe(section.id);
+    expect(route.id).toBe(section.id);
   }
 });
 
 test('a route is written back as the address it was read from', () => {
-  expect(formatRoute({ tab: 'help', section: 'download' })).toBe(
-    '/help/download',
-  );
-  expect(formatRoute({ tab: 'examples', section: null })).toBe('/examples');
+  expect(router.format({ tab: 'help', id: 'download' })).toBe('/help/download');
+  expect(router.format({ tab: 'examples' })).toBe('/examples');
 });
 
 test('the builder is the home page rather than a second address for it', () => {
-  expect(formatRoute({ tab: 'builder', section: null })).toBe('/');
-  expect(parseRoute('/')).toStrictEqual({ tab: 'builder', section: null });
+  expect(router.format({ tab: 'builder' })).toBe('/');
+  expect(router.parse('/')).toStrictEqual({
+    tab: 'builder',
+    id: null,
+    params: {},
+  });
 });
 
 test('a trailing slash is not read as a section', () => {
-  expect(parseRoute('/help/')).toStrictEqual({ tab: 'help', section: null });
+  expect(router.parse('/help/')).toStrictEqual({
+    tab: 'help',
+    id: null,
+    params: {},
+  });
 });
 
 test('a link written when the site routed by the hash still opens', () => {
@@ -95,10 +111,7 @@ test('every page is titled and described on its own', () => {
 });
 
 test('a chapter of the manual is indexed under the manual', () => {
-  const page = formatRoute({
-    tab: parseRoute('/help/draw-the-core').tab,
-    section: null,
-  });
+  const page = router.format({ tab: router.parse('/help/draw-the-core').tab });
 
   expect(
     pageDocumentMeta({ site: 'vcl', routes: PAGE_ROUTES, url: page }).canonical,

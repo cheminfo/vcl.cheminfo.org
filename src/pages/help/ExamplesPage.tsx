@@ -1,7 +1,8 @@
 import { Callout, Card, H5, Tag } from '@blueprintjs/core';
 import type { ReactElement } from 'react';
 import { useMemo } from 'react';
-import { MolfileSvgRenderer } from 'react-ocl';
+import { pluralize } from 'react-cheminfo/core';
+import { Structure } from 'react-cheminfo/structure';
 import { Button } from 'react-science/ui';
 
 import { HelpTooltip } from '../../components/shared/HelpTooltip.tsx';
@@ -57,7 +58,7 @@ function loadHelp(title: string): HelpContent {
 
 function fragmentCountHelp(count: number): HelpContent {
   return {
-    title: `${count} fragments`,
+    title: `${count} ${pluralize(count, 'fragment')}`,
     description:
       'How many substituents this example varies. Each one is ticked for the positions of the core it may occupy.',
     link: helpLink('draw-the-fragments'),
@@ -72,17 +73,16 @@ function ExampleCard(props: ExampleCardProps): ReactElement {
     <Card className="example-card">
       <H5>{example.title}</H5>
       <div className="example-preview">
-        <MolfileSvgRenderer
+        <Structure
           molfile={library.coreMolfile}
           width={PREVIEW_WIDTH}
           height={PREVIEW_HEIGHT}
-          autoCrop
           autoCropMargin={6}
         />
       </div>
       <HelpTooltip help={fragmentCountHelp(library.fragments.length)}>
         <Tag minimal intent="primary">
-          {`${library.fragments.length} fragments`}
+          {`${library.fragments.length} ${pluralize(library.fragments.length, 'fragment')}`}
         </Tag>
       </HelpTooltip>
       <p>{example.description}</p>

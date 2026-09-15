@@ -106,14 +106,21 @@ test('the paper the method comes from is cited, with its DOI', async ({
 
   const cite = page.locator('.about-cite');
   await expect(cite).toContainText('The virtual screening approach');
-  await expect(cite).toContainText(
-    'A virtual screening approach to identifying the greenest compound for a task: application to switchable-hydrophilicity solvents',
-  );
-  await expect(cite).toContainText('Green Chem. 2015, 17, 5182–5188');
-  await expect(cite.getByRole('link')).toHaveAttribute(
+
+  // The page names the work; its reference is what its Cite button opens.
+  await cite
+    .getByRole('button', {
+      name: 'Cite The virtual screening approach',
+      exact: true,
+    })
+    .click();
+  const doi = page.locator('.citation-menu a[href^="https://doi.org/"]');
+  await expect(doi).toHaveAttribute(
     'href',
     'https://doi.org/10.1039/C5GC01022E',
   );
+  await expect(doi).toContainText('Green Chem. 2015');
+  await expect(doi).toContainText('10.1039/C5GC01022E');
 });
 
 test('the licence and the sources are named, and the issue tracker with them', async ({

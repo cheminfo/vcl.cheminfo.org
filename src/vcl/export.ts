@@ -1,3 +1,5 @@
+import { toDelimited } from 'react-cheminfo/core';
+
 import type { GeneratedMolecule } from './types.ts';
 import { NUMERIC_PROPERTIES } from './types.ts';
 
@@ -48,19 +50,17 @@ export function toCSV(molecules: readonly GeneratedMolecule[]): string {
   const header: string[] = ['smiles', 'mf'];
   for (const property of NUMERIC_PROPERTIES) header.push(property.key);
 
-  const chunks: string[] = [header.join(','), '\n'];
+  const rows: string[][] = [];
   for (const molecule of molecules) {
-    chunks.push(
-      escapeCSVValue(molecule.smiles),
-      ',',
-      escapeCSVValue(molecule.mf),
-    );
+    const row: string[] = [molecule.smiles, molecule.mf];
     for (const property of NUMERIC_PROPERTIES) {
-      chunks.push(',', molecule[property.key].toFixed(property.decimals));
+      row.push(molecule[property.key].toFixed(property.decimals));
     }
-    chunks.push('\n');
+    rows.push(row);
   }
-  return chunks.join('');
+
+  // A file whose every line ends the same way, the last one included.
+  return `${toDelimited(rows, { delimiter: ',', header })}\n`;
 }
 
 function normaliseMolfile(molfile: string): string {
@@ -75,30 +75,4 @@ function normaliseMolfile(molfile: string): string {
 
 function pushDataField(chunks: string[], name: string, value: string): void {
   chunks.push('>  <', name, '>\n', value, '\n\n');
-}
-
-function escapeCSVValue(value: string): string {
-  if (!/[\n\r",]/.test(value)) return value;
-  return `"${value.replaceAll('"', '""')}"`;
-}
-
-/**
- * Trigger a browser download of some text.
- * @param filename - Name the browser gives to the saved file.
- * @param mimeType - MIME type of the content, e.g. `text/csv`.
- * @param content - Text to save.
- */
-export function downloadText(
-  filename: string,
-  mimeType: string,
-  content: string,
-): void {
-  const url = URL.createObjectURL(new Blob([content], { type: mimeType }));
-  const anchor = document.createElement('a');
-  anchor.href = url;
-  anchor.download = filename;
-  document.body.append(anchor);
-  anchor.click();
-  anchor.remove();
-  URL.revokeObjectURL(url);
 }

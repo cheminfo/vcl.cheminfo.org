@@ -9,6 +9,7 @@
 
 import type { Locator, Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
+import { groupedSites, siteUrl } from 'react-cheminfo/core';
 
 /** Every page of the site: its address, its entry in the bar, and its title. */
 const PAGES = [
@@ -104,8 +105,9 @@ test('the bar carries the site pages on the left and the utilities on the right'
     'Help',
     'About',
   ]);
-  // Cite and Tools, the two utilities every site of the family carries.
-  await expect(page.locator('.app-header button')).toHaveText([
+  // Cite and Tools, the two utilities every site of the family carries. Read by
+  // role, which leaves out the menu the pages fold into on a phone only.
+  await expect(page.locator('.app-header').getByRole('button')).toHaveText([
     'Cite',
     'Tools',
   ]);
@@ -119,9 +121,22 @@ test('the footer walks to every sister site, and marks the one being read', asyn
 
   const footer = page.locator('.app-footer');
   await expect(footer.locator('h2')).toHaveText('Our other tools');
-  // Seventeen sites in the shared registry: sixteen links, plus this one
-  // written as plain text because a visitor is already on it.
-  await expect(footer.locator('.ecosystem-links a')).toHaveCount(16);
+  // Every site of the shared registry is a link, in the order the footer
+  // gathers them under their topics, except this one, written as plain text
+  // because a visitor is already on it.
+  const sisterUrls: string[] = [];
+  for (const { sites } of groupedSites()) {
+    for (const site of sites) {
+      if (site.id !== 'vcl') sisterUrls.push(siteUrl(site));
+    }
+  }
+  const links = footer.locator('.ecosystem-links a');
+  await expect(links).toHaveCount(sisterUrls.length);
+  expect(
+    await links.evaluateAll((anchors) =>
+      anchors.map((anchor) => anchor.getAttribute('href')),
+    ),
+  ).toStrictEqual(sisterUrls);
   await expect(footer.getByText('you are here')).toHaveCount(1);
   await expect(
     footer.locator('.ecosystem-links a[href="https://smiles.cheminfo.org/"]'),

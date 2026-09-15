@@ -21,11 +21,11 @@ import { helpTooltip } from './components/shared/helpContent.tsx';
 import { BuilderPage } from './pages/builder/BuilderPage.tsx';
 import { ExamplesPage } from './pages/help/ExamplesPage.tsx';
 import { HelpPage } from './pages/help/HelpPage.tsx';
-import { PAPER } from './paper.ts';
 import { PAGE_ROUTES } from './state/routes.ts';
+import { isEmbedded } from './state/share.ts';
 import { absoluteUrl, pathWithoutBase, withBase } from './state/site.ts';
 import type { Route, TabId } from './state/view.ts';
-import { formatRoute, parseRoute, setActiveTab, view } from './state/view.ts';
+import { router, setActiveTab, view } from './state/view.ts';
 
 const TABS: ReadonlyArray<{ id: TabId; label: string; help: HelpContent }> = [
   {
@@ -66,6 +66,7 @@ const TABS: ReadonlyArray<{ id: TabId; label: string; help: HelpContent }> = [
 export function App(): ReactElement {
   useSignals();
   const activeTab = view.activeTab.value;
+  const embedded = isEmbedded();
 
   useEffect(() => {
     function synchronizeFromAddress(): void {
@@ -83,10 +84,11 @@ export function App(): ReactElement {
     // Only the tab is compared: an address naming a section of the tab being
     // shown, e.g. /help/draw-the-core, must survive.
     if (routeFromAddress().tab === tab) return;
+    // The query carries `?embed`, which a move inside the tool must keep.
     window.history.pushState(
       null,
       '',
-      withBase(formatRoute({ tab, section: null })),
+      withBase(router.format({ tab })) + window.location.search,
     );
   });
 
@@ -97,7 +99,7 @@ export function App(): ReactElement {
     startDocumentMeta({
       site: 'vcl',
       routes: PAGE_ROUTES,
-      url: () => formatRoute({ tab: activeTab, section: null }),
+      url: () => router.format({ tab: activeTab }),
       origin: absoluteUrl('/'),
     });
   }, [activeTab]);
@@ -105,66 +107,65 @@ export function App(): ReactElement {
   const nav = TABS.map((tab) => ({
     id: tab.id,
     label: tab.label,
-    href: formatRoute({ tab: tab.id, section: null }),
+    href: router.format({ tab: tab.id }),
     onSelect: () => setActiveTab(tab.id),
   }));
 
   return (
     <div className="app">
       <SiteTheme siteId="vcl" />
-      <SiteHeader
-        siteId="vcl"
-        width="full"
-        nav={nav}
-        activeId={activeTab}
-        homeHref={withBase('/')}
-        markSize={26}
-        renderNavItem={(item, isActive) => {
-          const tab = TABS.find((candidate) => candidate.id === item.id);
-          if (tab === undefined) {
-            return <NavLink item={item} active={isActive} />;
-          }
-          return (
-            <Tooltip key={item.id} {...helpTooltip(tab.help)}>
-              <NavLink item={item} active={isActive} />
-            </Tooltip>
-          );
-        }}
-        actions={
-          <>
-            {/* About leads the utilities on every site of the family, and is a
+      <div className="app-screen">
+        <SiteHeader
+          siteId="vcl"
+          width="full"
+          embedded={embedded}
+          nav={nav}
+          activeId={activeTab}
+          homeHref={withBase('/')}
+          markSize={26}
+          renderNavItem={(item, isActive) => {
+            const tab = TABS.find((candidate) => candidate.id === item.id);
+            if (tab === undefined) {
+              return <NavLink item={item} active={isActive} />;
+            }
+            return (
+              <Tooltip key={item.id} {...helpTooltip(tab.help)}>
+                <NavLink item={item} active={isActive} />
+              </Tooltip>
+            );
+          }}
+          actions={
+            <>
+              {/* About leads the utilities on every site of the family, and is a
                 real address rather than a dialog: a page is indexed, linkable
                 and printable. */}
-            <NavLink
-              item={{
-                id: 'about',
-                label: (
-                  <>
-                    <SiteMark siteId="vcl" size={14} />
-                    About
-                  </>
-                ),
-                href: withBase('/about'),
-                title: 'What vcl.cheminfo.org is, and how to cite it',
-                onSelect: () => setActiveTab('about'),
-              }}
-              active={activeTab === 'about'}
-            />
-            <CiteButton reference={PAPER} />
-            <EcosystemButton currentSiteId="vcl" />
-          </>
-        }
-      />
-      {/* The About draws the tagline in its own hero, so the shell does not
+              <NavLink
+                item={{
+                  id: 'about',
+                  label: 'About',
+                  icon: <SiteMark siteId="vcl" size={14} />,
+                  href: withBase('/about'),
+                  title: 'What vcl.cheminfo.org is, and how to cite it',
+                  onSelect: () => setActiveTab('about'),
+                }}
+                active={activeTab === 'about'}
+              />
+              {ABOUT.cite ? <CiteButton works={ABOUT.cite} /> : null}
+              <EcosystemButton currentSiteId="vcl" />
+            </>
+          }
+        />
+        {/* The About draws the tagline in its own hero, so the shell does not
           write it twice. */}
-      {activeTab === 'about' ? null : (
-        <p className="app-tagline">
-          Combine a core carrying R groups with a set of fragments, then screen
-          the enumerated library on its predicted properties.
-        </p>
-      )}
-      <main className="app-body">{renderPage(activeTab)}</main>
-      <SiteFooter siteId="vcl" width="full" />
+        {activeTab === 'about' || embedded ? null : (
+          <p className="app-tagline">
+            Combine a core carrying R groups with a set of fragments, then
+            screen the enumerated library on its predicted properties.
+          </p>
+        )}
+        <main className="app-body">{renderPage(activeTab)}</main>
+      </div>
+      <SiteFooter siteId="vcl" width="full" embedded={embedded} />
     </div>
   );
 }
@@ -177,5 +178,5 @@ function renderPage(tab: TabId): ReactElement {
 }
 
 function routeFromAddress(): Route {
-  return parseRoute(pathWithoutBase(window.location.pathname));
+  return router.parse(pathWithoutBase(window.location.pathname));
 }

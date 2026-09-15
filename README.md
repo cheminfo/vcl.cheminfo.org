@@ -6,10 +6,6 @@ combination together with its predicted properties.
 
 Deployed at <https://vcl.cheminfo.org>.
 
-This application replaces the older
-[cheminfo visualizer view](https://www.cheminfo.org/?viewURL=https%3A%2F%2Fcouch.cheminfo.org%2Fcheminfo-public%2F65f84b002399eb79ec0f8bf145fbd24f%2Fview.json&loadversion=true&fillsearch=Virtual+combinatorial+library)
-of the same name.
-
 ## What it does
 
 1. **Core** — draw the scaffold and mark up to four substitution points, `R1` to

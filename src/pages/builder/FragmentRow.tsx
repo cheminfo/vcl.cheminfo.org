@@ -1,7 +1,7 @@
 import { EditableText, Icon, Switch } from '@blueprintjs/core';
 import { useSignals } from '@preact/signals-react/runtime';
 import type { MouseEvent, ReactElement } from 'react';
-import { MolfileSvgRenderer } from 'react-ocl';
+import { Structure } from 'react-cheminfo/structure';
 import { Button } from 'react-science/ui';
 
 import { HelpTooltip } from '../../components/shared/HelpTooltip.tsx';
@@ -75,17 +75,13 @@ export function FragmentRow(props: FragmentRowProps): ReactElement {
     >
       <span className="fragment-row__index">{position}</span>
       <div className="fragment-row__thumbnail">
-        {fragment.molfile.trim() === '' ? (
-          <span className="fragment-row__empty">Not drawn</span>
-        ) : (
-          <MolfileSvgRenderer
-            molfile={fragment.molfile}
-            width={120}
-            height={70}
-            autoCrop
-            autoCropMargin={6}
-          />
-        )}
+        <Structure
+          molfile={fragment.molfile}
+          width={120}
+          height={70}
+          autoCropMargin={6}
+          fallback={<span className="fragment-row__empty">Not drawn</span>}
+        />
       </div>
       <div className="fragment-row__main">
         <HelpTooltip help={FRAGMENT_NAME_HELP} placement="top-start">

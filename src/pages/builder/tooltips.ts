@@ -1,3 +1,5 @@
+import { formatInteger, pluralize } from 'react-cheminfo/core';
+
 import type { HelpContent } from '../../components/shared/helpContent.tsx';
 import type { NumericPropertyKey, RGroupKey } from '../../vcl/types.ts';
 import { NUMERIC_PROPERTY_BY_KEY } from '../../vcl/types.ts';
@@ -187,7 +189,7 @@ export function coreRGroupHelp(key: RGroupKey, count: number): HelpContent {
     };
   }
   return {
-    title: `${key} varies over ${count} ${count === 1 ? 'fragment' : 'fragments'}`,
+    title: `${key} varies over ${count} ${pluralize(count, 'fragment')}`,
     description: `Every molecule of the library carries one of those ${count} at the ${key} position.`,
   };
 }
@@ -211,7 +213,7 @@ export function generateHelp(
   }
   return {
     title: 'Generate library',
-    description: `Enumerates the ${count.toLocaleString('en-US')} combinations of the core and the enabled fragments, and keeps the distinct molecules.`,
+    description: `Enumerates the ${formatInteger(count)} combinations of the core and the enabled fragments, and keeps the distinct molecules.`,
     link: helpLink('generate-the-library'),
   };
 }
@@ -243,13 +245,13 @@ export const TABLE_FORMULA_HELP: HelpContent = {
 export function selectionHelp(filtered: number, total: number): HelpContent {
   if (filtered === total) {
     return {
-      title: `${total.toLocaleString('en-US')} distinct molecules`,
+      title: `${formatInteger(total)} distinct molecules`,
       description:
         'The whole library. Drag along an axis of the plot to keep only a range of one property.',
     };
   }
   return {
-    title: `${filtered.toLocaleString('en-US')} of ${total.toLocaleString('en-US')} kept`,
+    title: `${formatInteger(filtered)} of ${formatInteger(total)} kept`,
     description:
       'The brushes of the plot hide the rest. The table and the downloads only ever contain what is kept.',
   };

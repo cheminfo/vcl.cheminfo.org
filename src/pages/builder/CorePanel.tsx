@@ -1,8 +1,10 @@
 import { Callout, Card, Classes, H5, Tag } from '@blueprintjs/core';
 import { useSignals } from '@preact/signals-react/runtime';
 import type { ReactElement } from 'react';
-import { useEffect, useState } from 'react';
-import { CanvasMoleculeEditor } from 'react-ocl';
+import { useState } from 'react';
+import { pluralize } from 'react-cheminfo/core';
+import { StructureEditor } from 'react-cheminfo/structure';
+import { useCopyToClipboard } from 'react-cheminfo/ui';
 import { Button } from 'react-science/ui';
 
 import { HelpIcon } from '../../components/shared/HelpIcon.tsx';
@@ -28,9 +30,9 @@ import {
 
 const R_GROUP_HINT =
   'To mark a substitution point, hover the atom in the editor, type R1, R2, R3 or R4, then press Enter. Typing a bare R works too: it takes the lowest number still free.';
-// The OpenChemLib editor lays its tool palette out down the left edge and
-// crams the glyphs together when the canvas is shorter than this.
-const EDITOR_HEIGHT = 360;
+// The shortest the drawing area is ever drawn; the editor raises it further
+// when its own tool palette needs more room than that.
+const EDITOR_MIN_HEIGHT = 360;
 const COPY_FEEDBACK_MS = 2000;
 
 interface EditorSource {
@@ -51,17 +53,7 @@ export function CorePanel(): ReactElement {
     revision: 0,
     molfile: preferences.library.coreMolfile.peek(),
   }));
-  const [copied, setCopied] = useState(false);
-
-  useEffect(() => {
-    if (!copied) return undefined;
-    const timer = setTimeout(() => {
-      setCopied(false);
-    }, COPY_FEEDBACK_MS);
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [copied]);
+  const { copied, copy } = useCopyToClipboard(COPY_FEEDBACK_MS);
 
   function handleReset(): void {
     resetLibrary();
@@ -70,16 +62,8 @@ export function CorePanel(): ReactElement {
   }
 
   function handleCopySmiles(): void {
-    const clipboard: Clipboard | undefined = navigator.clipboard;
-    if (clipboard === undefined || info.smilesWithR === '') return;
-    void clipboard.writeText(info.smilesWithR).then(
-      () => {
-        setCopied(true);
-      },
-      () => {
-        setCopied(false);
-      },
-    );
+    if (info.smilesWithR === '') return;
+    void copy(info.smilesWithR);
   }
 
   return (
@@ -111,28 +95,25 @@ export function CorePanel(): ReactElement {
         </div>
       </div>
 
-      <div className="core-editor">
-        <CanvasMoleculeEditor
-          key={editorSource.revision}
-          inputFormat="molfile"
-          inputValue={editorSource.molfile}
-          width="100%"
-          height={EDITOR_HEIGHT}
-          onChange={(event) => {
-            const drawn = event.getMolfile();
-            const molfile = normalizeCoreMolfile(drawn);
-            setCoreMolfile(molfile);
-            // Reloading the editor is what shows the user the number their `R`
-            // was given, so only do it when an atom really had to be numbered.
-            if (molfile !== drawn) {
-              setEditorSource((source) => ({
-                revision: source.revision + 1,
-                molfile,
-              }));
-            }
-          }}
-        />
-      </div>
+      <StructureEditor
+        inputFormat="molfile"
+        value={editorSource.molfile}
+        revision={editorSource.revision}
+        minHeight={EDITOR_MIN_HEIGHT}
+        debounce={0}
+        onChange={(change) => {
+          const molfile = normalizeCoreMolfile(change.molfile);
+          setCoreMolfile(molfile);
+          // Reloading the editor is what shows the user the number their `R`
+          // was given, so only do it when an atom really had to be numbered.
+          if (molfile !== change.molfile) {
+            setEditorSource((source) => ({
+              revision: source.revision + 1,
+              molfile,
+            }));
+          }
+        }}
+      />
 
       <div className="panel-hint">{R_GROUP_HINT}</div>
 
@@ -146,7 +127,7 @@ export function CorePanel(): ReactElement {
                 minimal={count === 0}
                 icon={count === 0 ? 'warning-sign' : undefined}
               >
-                {`${key} · ${count} ${count === 1 ? 'fragment' : 'fragments'}`}
+                {`${key} · ${count} ${pluralize(count, 'fragment')}`}
               </Tag>
             </HelpTooltip>
           );

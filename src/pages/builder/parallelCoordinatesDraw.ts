@@ -1,7 +1,9 @@
+import { sampleScale } from 'react-cheminfo/core';
+
 import type { GeneratedMolecule, NumericPropertyKey } from '../../vcl/types.ts';
 
 import type { AxisLayout } from './parallelCoordinatesScales.ts';
-import { valueToColor, valueToY } from './parallelCoordinatesScales.ts';
+import { PLOT_COLOR_SCALE, valueToY } from './parallelCoordinatesScales.ts';
 
 /** Everything the canvas pass needs, besides the drawing context. */
 export interface DrawOptions {
@@ -36,7 +38,10 @@ const PALETTE_STEPS = 120;
 // compositing can only ever converge on this colour.
 const EXCLUDED_COLOR = 'rgba(171, 179, 191, 0.16)';
 const INCLUDED_ALPHA = 0.35;
-const PALETTE: readonly string[] = buildPalette();
+const PALETTE: readonly string[] = sampleScale(
+  PLOT_COLOR_SCALE,
+  PALETTE_STEPS + 1,
+);
 // A halo under the highlighted polyline, so it reads against the dense mass of
 // the library whatever colour that mass has at this point.
 const HALO_COLOR = 'rgba(255, 255, 255, 0.85)';
@@ -162,12 +167,4 @@ function colorStep(value: number, min: number, span: number): number {
   if (Number.isNaN(ratio) || ratio < 0) return 0;
   if (ratio > 1) return PALETTE_STEPS;
   return Math.round(ratio * PALETTE_STEPS);
-}
-
-function buildPalette(): string[] {
-  const palette: string[] = [];
-  for (let step = 0; step <= PALETTE_STEPS; step++) {
-    palette.push(valueToColor(step, 0, PALETTE_STEPS));
-  }
-  return palette;
 }

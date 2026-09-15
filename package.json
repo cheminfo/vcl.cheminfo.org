@@ -6,6 +6,7 @@
   "private": true,
   "scripts": {
     "build": "vite build",
+    "check-deploy": "node node_modules/react-cheminfo/bin/check-deploy.mjs",
     "check-tokens": "node node_modules/react-cheminfo/bin/check-tokens.mjs src",
     "check-types": "tsc --noEmit",
     "dev": "vite",
@@ -14,7 +15,7 @@
     "prettier": "prettier --check .",
     "prettier-write": "prettier --write .",
     "preview": "vite preview",
-    "test": "npm run test-only && npm run check-types && npm run check-tokens && npm run eslint && npm run prettier",
+    "test": "npm run test-only && npm run check-types && npm run check-tokens && npm run check-deploy && npm run eslint && npm run prettier",
     "test-e2e": "playwright test",
     "test-only": "vitest run --coverage"
   },
@@ -28,14 +29,14 @@
     "d3-brush": "^3.0.0",
     "d3-selection": "^3.0.0",
     "fifo-logger": "^2.0.1",
-    "openchemlib": "^9.24.0",
+    "openchemlib": "^9.25.0",
     "openchemlib-utils": "^8.17.1",
     "react": "^19.2.8",
-    "react-cheminfo": "^0.11.0",
+    "react-cheminfo": "^0.12.0",
     "react-dom": "^19.2.8",
     "react-mf": "^3.1.1",
     "react-ocl": "^8.7.2",
-    "react-science": "^21.0.0"
+    "react-science": "^23.1.1"
   },
   "devDependencies": {
     "@playwright/test": "^1.62.1",

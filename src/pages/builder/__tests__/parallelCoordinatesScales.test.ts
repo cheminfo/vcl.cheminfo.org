@@ -100,17 +100,17 @@ test('a flat drawing area cannot be inverted', () => {
   expect(yToValue(0, axis, 0)).toBe(10);
 });
 
-test('the colour runs from red at the minimum to blue at the maximum', () => {
-  expect(valueToColor(0, 0, 10)).toBe('hsl(360, 65%, 65%)');
-  expect(valueToColor(5, 0, 10)).toBe('hsl(300, 65%, 65%)');
-  expect(valueToColor(10, 0, 10)).toBe('hsl(240, 65%, 65%)');
+test('the colour runs the plot ramp from its low end to its high end', () => {
+  expect(valueToColor(0, 0, 10)).toBe('#440154');
+  expect(valueToColor(5, 0, 10)).toBe('#21918c');
+  expect(valueToColor(10, 0, 10)).toBe('#fde725');
 });
 
-test('the colour ratio is clamped and a flat extent stays red', () => {
-  expect(valueToColor(-4, 0, 10)).toBe('hsl(360, 65%, 65%)');
-  expect(valueToColor(40, 0, 10)).toBe('hsl(240, 65%, 65%)');
-  expect(valueToColor(7, 7, 7)).toBe('hsl(360, 65%, 65%)');
-  expect(valueToColor(Number.NaN, 0, 10)).toBe('hsl(360, 65%, 65%)');
+test('the colour position is clamped and a flat extent sits mid ramp', () => {
+  expect(valueToColor(-4, 0, 10)).toBe('#440154');
+  expect(valueToColor(40, 0, 10)).toBe('#fde725');
+  expect(valueToColor(7, 7, 7)).toBe('#21918c');
+  expect(valueToColor(Number.NaN, 0, 10)).toBe('#440154');
 });
 
 test('an axis carries five ticks formatted with the property decimals', () => {

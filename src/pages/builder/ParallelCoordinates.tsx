@@ -7,6 +7,7 @@ import type {
   ReactElement,
 } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useContainerSize } from 'react-cheminfo/ui';
 import { MF } from 'react-mf';
 
 import { helpTooltip } from '../../components/shared/helpContent.tsx';
@@ -96,7 +97,10 @@ export function ParallelCoordinates(props: ParallelCoordinatesProps) {
     new Map<NumericPropertyKey, BrushBehavior<unknown>>(),
   );
   const rangeChangeRef = useRef(onRangeChange);
-  const [width, setWidth] = useState(DEFAULT_WIDTH);
+  const measured = useContainerSize(containerRef);
+  // Until the container has been measured, draw at the width most screens give
+  // it rather than at the ten pixels a zero measurement clamps to.
+  const width = measured.width > 0 ? measured.width : DEFAULT_WIDTH;
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
 
   const innerWidth = Math.max(width - PLOT_MARGIN.left - PLOT_MARGIN.right, 10);
@@ -125,18 +129,6 @@ export function ParallelCoordinates(props: ParallelCoordinatesProps) {
   useEffect(() => {
     rangeChangeRef.current = onRangeChange;
   }, [onRangeChange]);
-
-  useEffect(() => {
-    const container = containerRef.current;
-    if (container === null) return;
-    const observer = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        if (entry.contentRect.width > 0) setWidth(entry.contentRect.width);
-      }
-    });
-    observer.observe(container);
-    return () => observer.disconnect();
-  }, []);
 
   useEffect(() => {
     const context = prepareCanvas(canvasRef.current, width, height);

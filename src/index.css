@@ -46,11 +46,15 @@ body {
   color: var(--text-muted);
   font-size: 0.875rem;
 }
+/* The header and the page fill the screen, so the footer is always reached by
+   scrolling, however short the page is. */
+.app-screen {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
 .app-body {
   flex: 1 1 auto;
-  /* The page owns the screen it opens on, so the family links below it are
-     always reached by scrolling, however short the page is. */
-  min-height: calc(100dvh - var(--header-height));
   min-width: 0;
 }
 
@@ -124,10 +128,47 @@ body {
 }
 @media (max-width: 1100px) {
   .builder {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .builder > *:nth-child(n + 3) {
     grid-column: 1;
+  }
+}
+/* A phone: one gutter rather than the page's padding plus each card's, and one
+   scrollbar — the fragment list is part of the page, not a box inside it. */
+@media (max-width: 600px) {
+  .app-tagline {
+    padding-inline: 12px;
+  }
+  .builder,
+  .examples-page {
+    gap: 8px;
+    padding: 8px 4px;
+  }
+  .builder > .bp6-card,
+  .example-card.bp6-card {
+    padding: 12px 8px;
+  }
+  .fragment-list {
+    max-height: none;
+    overflow: visible;
+  }
+  /* The switch and the bin move under the name, which keeps the width for the
+     R group capsules. */
+  .fragment-row {
+    grid-template-columns: 20px 128px minmax(0, 1fr);
+  }
+  .fragment-row__index,
+  .fragment-row__thumbnail {
+    grid-row: span 2;
+  }
+  .fragment-row__actions {
+    grid-column: 3;
+    justify-content: flex-end;
+  }
+  .fragment-dialog {
+    max-width: calc(100vw - 16px);
+    margin: 8px;
   }
 }
 
@@ -159,12 +200,6 @@ body {
 }
 
 /* Core panel */
-.core-editor {
-  border: 1px solid rgb(17 20 24 / 15%);
-  border-radius: 2px;
-  overflow: hidden;
-  background: #fff;
-}
 .core-summary {
   display: flex;
   flex-wrap: wrap;
@@ -260,12 +295,6 @@ body {
   flex-direction: column;
   gap: 8px;
   padding: 12px;
-}
-.fragment-editor__draw {
-  border: 1px solid rgb(17 20 24 / 15%);
-  border-radius: 2px;
-  overflow: hidden;
-  background: #fff;
 }
 .fragment-editor__preview {
   display: flex;
@@ -483,51 +512,6 @@ body {
   margin: 6px 0;
   color: var(--text-muted);
   font-size: 12px;
-}
-
-/* Glossary terms, in help prose and anywhere else GlossaryText is used */
-.glossary-term {
-  border-bottom: 1px dashed var(--accent);
-  color: #1c6e42;
-  cursor: help;
-}
-.glossary-tooltip-body {
-  width: 280px;
-}
-.glossary-tooltip-title {
-  font-size: 13px;
-  font-weight: 600;
-}
-.glossary-tooltip-body p {
-  margin: 5px 0 0;
-  /* Ink on Blueprint's dark popover, as in the help tooltip above. */
-  color: #d3d8de; /* tokens-ok */
-  font-size: 12px;
-  line-height: 1.45;
-}
-.glossary-tooltip-body ul {
-  margin: 6px 0 0;
-  padding: 0;
-  list-style: none;
-}
-.glossary-tooltip-body li {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 6px;
-  padding-top: 3px;
-}
-.glossary-tooltip-body code {
-  padding: 1px 4px;
-  border-radius: 2px;
-  background: rgb(255 255 255 / 12%);
-  color: #e5e8eb;
-  font-size: 11px;
-  overflow-wrap: anywhere;
-}
-.glossary-tooltip-body em {
-  color: #abb3bf;
-  font-size: 11px;
 }
 
 /* Help page: a sticky table of contents beside one readable column */
