@@ -130,10 +130,9 @@ test('the licence and the sources are named, and the issue tracker with them', a
 
   const licence = page.locator('.about-licence');
   await expect(licence).toContainText('MIT, © cheminfo.');
-  await expect(licence.getByRole('link')).toHaveAttribute(
-    'href',
-    'https://github.com/cheminfo/vcl.cheminfo.org',
-  );
+  await expect(
+    licence.getByRole('link', { name: 'github.com/cheminfo/vcl.cheminfo.org' }),
+  ).toHaveAttribute('href', 'https://github.com/cheminfo/vcl.cheminfo.org');
   await expect(page.locator('.about-issues').getByRole('link')).toHaveAttribute(
     'href',
     'https://github.com/cheminfo/vcl.cheminfo.org/issues',
