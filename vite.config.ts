@@ -1,5 +1,5 @@
 import react from '@vitejs/plugin-react';
-import { cheminfoPrerender } from 'react-cheminfo/vite';
+import { cheminfoBuildInfo, cheminfoPrerender } from 'react-cheminfo/vite';
 import { defineConfig } from 'vite';
 
 import { NOSCRIPT_ROUTES, PAGE_ROUTES } from './src/state/routes.ts';
@@ -23,6 +23,7 @@ export default defineConfig({
   base: './',
   plugins: [
     react(),
+    cheminfoBuildInfo(),
     // A static image has no server to write the head per request, so the build
     // writes one real file per address instead, plus the sitemap and the robots
     // policy. `origin` carries the mount path as well as the host, which is

@@ -8,6 +8,7 @@
  * method somebody publishes with has to be citable from the page itself.
  */
 
+import { BUILD_INFO } from 'react-cheminfo/build-info';
 import type { AboutContent, CitedWork } from 'react-cheminfo/core';
 import { PLATFORM_WORK } from 'react-cheminfo/core';
 
@@ -23,6 +24,9 @@ const SCREENING_WORK: CitedWork = {
 /** The record the `/about` page is drawn from. */
 export const ABOUT: AboutContent = {
   siteId: 'vcl',
+  // Which release, built when, from which commit: the build says so,
+  // because a version written by hand is wrong by the next release.
+  build: BUILD_INFO,
   what: 'Draw a core carrying R groups and the fragments that may fill them, enumerate every product, and screen the library on predicted properties.',
   can: [
     'Draw a core with up to four R groups, and the fragments each one accepts.',
