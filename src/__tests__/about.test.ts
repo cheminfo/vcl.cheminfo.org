@@ -56,9 +56,10 @@ test('the record resolves against the shared registries', () => {
   expect(about.site.host).toBe('vcl.cheminfo.org');
   expect(about.license).toBe('MIT');
   expect(about.repository).toBe('https://github.com/cheminfo/vcl.cheminfo.org');
-  expect(about.issues).toBe(
-    'https://github.com/cheminfo/vcl.cheminfo.org/issues',
-  );
+  // The sources are private, so the page asks for a report nowhere rather
+  // than pointing a visitor at a tracker that answers 404.
+  expect(about.publicRepository).toBe(false);
+  expect(about.issues).toBeUndefined();
   expect(about.credits.map((entry) => entry.name)).toStrictEqual([
     'OpenChemLib',
     'openchemlib-utils',

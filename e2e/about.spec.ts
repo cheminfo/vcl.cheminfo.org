@@ -11,20 +11,26 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { expect, test } from '@playwright/test';
-import { releasedVersion } from 'react-cheminfo/core';
+import { UNRELEASED_VERSION } from 'react-cheminfo/core';
+
+/** The version release-please writes into the root `package.json`. */
+const VERSION = (
+  JSON.parse(
+    readFileSync(join(import.meta.dirname, '../package.json'), 'utf8'),
+  ) as { version: string }
+).version;
 
 /**
- * The version the hero shows: the build reads it from the root `package.json`,
- * where release-please writes it, and shows none before the first release.
+ * What the hero badge reads: the release when there is one, the commit the
+ * build was made from before the first one, and the instant it was made.
  */
-const SHOWN_VERSION = releasedVersion({
-  version: (
-    JSON.parse(
-      readFileSync(join(import.meta.dirname, '../package.json'), 'utf8'),
-    ) as { version: string }
-  ).version,
-  builtAt: '',
-});
+const BUILD_BADGE = new RegExp(
+  String.raw`^${
+    VERSION === UNRELEASED_VERSION
+      ? String.raw`[\da-f]{7}`
+      : VERSION.replaceAll('.', String.raw`\.`)
+  } · \d{4}-\d{2}-\d{2} \d{2}:\d{2} UTC$`,
+);
 
 /** The six things `ABOUT.can` says a visitor can do here. */
 const CAN = [
@@ -80,7 +86,7 @@ test('the About answers on its own address, naming the site and what it is for',
   );
 });
 
-test('the sections are the four the family writes for a private repository, in the family order', async ({
+test('the sections are the three the family writes for a private repository, in the family order', async ({
   page,
 }) => {
   await page.goto('/about');
@@ -89,7 +95,6 @@ test('the sections are the four the family writes for a private repository, in t
     'What you can do here',
     'Built on',
     'How to cite',
-    'Found a problem?',
   ]);
 });
 
@@ -139,9 +144,7 @@ test('the paper the method comes from is cited, with its DOI', async ({
   await expect(doi).toContainText('10.1039/C5GC01022E');
 });
 
-test('the private repository is named only through its issue tracker', async ({
-  page,
-}) => {
+test('the private repository is named nowhere at all', async ({ page }) => {
   await page.goto('/about');
 
   // No licence, sources or build line: a reader cannot open the repository.
@@ -155,19 +158,18 @@ test('the private repository is named only through its issue tracker', async ({
       exact: true,
     }),
   ).toHaveCount(0);
-  await expect(page.locator('.about-issues').getByRole('link')).toHaveAttribute(
-    'href',
-    'https://github.com/cheminfo/vcl.cheminfo.org/issues',
-  );
+  // Nor a tracker: the issues of a private repository answer 404.
+  await expect(page.locator('.about-issues')).toHaveCount(0);
+  await expect(about).not.toContainText('Found a problem?');
 });
 
-test('the hero shows the released version as plain text, and none before the first release', async ({
+test('the hero names the build it is serving, and dates it', async ({
   page,
 }) => {
   await page.goto('/about');
 
   await expect(page.locator('.about-hero .about-version')).toHaveText(
-    SHOWN_VERSION === undefined ? [] : [SHOWN_VERSION],
+    BUILD_BADGE,
   );
   // Never a link: the release page of a private repository answers 404.
   await expect(page.locator('a.about-version')).toHaveCount(0);
