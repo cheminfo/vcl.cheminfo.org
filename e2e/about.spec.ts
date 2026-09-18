@@ -1,13 +1,30 @@
 /**
  * The About page: what the site is, what it can do, what it borrows, how to
- * cite it and under which licence.
+ * cite it, and which release is running.
  *
  * Every string asserted here is a string of `src/about.ts`, so the page and the
  * record it is drawn from cannot drift apart — and a section the shared
  * `AboutPage` stops rendering is caught rather than silently lost.
  */
 
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 import { expect, test } from '@playwright/test';
+import { releasedVersion } from 'react-cheminfo/core';
+
+/**
+ * The version the hero shows: the build reads it from the root `package.json`,
+ * where release-please writes it, and shows none before the first release.
+ */
+const SHOWN_VERSION = releasedVersion({
+  version: (
+    JSON.parse(
+      readFileSync(join(import.meta.dirname, '../package.json'), 'utf8'),
+    ) as { version: string }
+  ).version,
+  builtAt: '',
+});
 
 /** The six things `ABOUT.can` says a visitor can do here. */
 const CAN = [
@@ -63,7 +80,7 @@ test('the About answers on its own address, naming the site and what it is for',
   );
 });
 
-test('the sections are the five the family writes, in the family order', async ({
+test('the sections are the four the family writes for a private repository, in the family order', async ({
   page,
 }) => {
   await page.goto('/about');
@@ -72,7 +89,6 @@ test('the sections are the five the family writes, in the family order', async (
     'What you can do here',
     'Built on',
     'How to cite',
-    'Licence and source',
     'Found a problem?',
   ]);
 });
@@ -123,18 +139,36 @@ test('the paper the method comes from is cited, with its DOI', async ({
   await expect(doi).toContainText('10.1039/C5GC01022E');
 });
 
-test('the licence and the sources are named, and the issue tracker with them', async ({
+test('the private repository is named only through its issue tracker', async ({
   page,
 }) => {
   await page.goto('/about');
 
-  const licence = page.locator('.about-licence');
-  await expect(licence).toContainText('MIT, © cheminfo.');
+  // No licence, sources or build line: a reader cannot open the repository.
+  await expect(page.locator('.about-licence')).toHaveCount(0);
+  const about = page.locator('.about-page');
+  await expect(about).not.toContainText('MIT, © cheminfo.');
+  await expect(about).not.toContainText('from commit');
   await expect(
-    licence.getByRole('link', { name: 'github.com/cheminfo/vcl.cheminfo.org' }),
-  ).toHaveAttribute('href', 'https://github.com/cheminfo/vcl.cheminfo.org');
+    about.getByRole('link', {
+      name: 'github.com/cheminfo/vcl.cheminfo.org',
+      exact: true,
+    }),
+  ).toHaveCount(0);
   await expect(page.locator('.about-issues').getByRole('link')).toHaveAttribute(
     'href',
     'https://github.com/cheminfo/vcl.cheminfo.org/issues',
   );
+});
+
+test('the hero shows the released version as plain text, and none before the first release', async ({
+  page,
+}) => {
+  await page.goto('/about');
+
+  await expect(page.locator('.about-hero .about-version')).toHaveText(
+    SHOWN_VERSION === undefined ? [] : [SHOWN_VERSION],
+  );
+  // Never a link: the release page of a private repository answers 404.
+  await expect(page.locator('a.about-version')).toHaveCount(0);
 });
