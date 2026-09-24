@@ -65,7 +65,9 @@ export function HelpPage(): ReactElement {
         </div>
       </nav>
 
-      <div className="help-content">
+      {/* The manual is prose and example codes a reader quotes and takes away,
+          so it stays selectable; the table of contents beside it is chrome. */}
+      <div className="help-content text-selectable">
         {HELP_SECTIONS.map((section) => (
           <section key={section.id} id={section.id} className="help-section">
             <H4>{section.title}</H4>

@@ -1,8 +1,9 @@
-import { Callout, Classes, Code, InputGroup } from '@blueprintjs/core';
+import { Callout, Classes, InputGroup } from '@blueprintjs/core';
 import type { KeyboardEvent, ReactElement } from 'react';
 import { useState } from 'react';
 import type { StructureEditorChange } from 'react-cheminfo/structure';
 import { StructureEditor } from 'react-cheminfo/structure';
+import { ClickToCopy } from 'react-cheminfo/ui';
 import { MolfileSvgRenderer } from 'react-ocl';
 
 import { HelpTooltip } from '../../components/shared/HelpTooltip.tsx';
@@ -132,7 +133,18 @@ export function FragmentEditor(props: FragmentEditorProps): ReactElement {
         <HelpTooltip help={FRAGMENT_SMILES_HELP} placement="top-start">
           <div className="fragment-editor__smiles">
             <span className={Classes.TEXT_MUTED}>SMILES</span>{' '}
-            <Code>{info.smilesWithR === '' ? '—' : info.smilesWithR}</Code>
+            <ClickToCopy
+              as="code"
+              className={Classes.CODE}
+              value={info.smilesWithR}
+              label="fragment SMILES"
+              disabled={info.smilesWithR === ''}
+              // The help tooltip already covers this line; a second, native
+              // tooltip under it would say the same thing twice.
+              title=""
+            >
+              {info.smilesWithR === '' ? '—' : info.smilesWithR}
+            </ClickToCopy>
           </div>
         </HelpTooltip>
       </div>

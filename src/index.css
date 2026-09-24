@@ -459,7 +459,9 @@ body {
 }
 .molecule-table-sort {
   width: 100%;
-  padding: 0;
+  /* The right padding is the gutter the copy glyph of a value cell sits in, so
+     a header label stays over the numbers it heads. */
+  padding: 0 22px 0 0;
   border: none;
   background: none;
   color: inherit;
@@ -473,18 +475,23 @@ body {
 .molecule-row {
   gap: 8px;
   padding: 0 8px;
-  /* The row is a <button> so it is reachable by keyboard, but it must not carry
-     any of the default button chrome. */
-  border: none;
   border-bottom: 1px solid rgb(17 20 24 / 8%);
+  cursor: pointer;
+}
+.molecule-row:hover {
+  background: var(--surface-sunken);
+}
+/* The one named control of a row: every cell beside it is a copy target of its
+   own, so the row itself is not a button. */
+.molecule-row__index {
+  justify-self: start;
+  padding: 0;
+  border: none;
   background: none;
   color: inherit;
   font: inherit;
   text-align: left;
   cursor: pointer;
-}
-.molecule-row:hover {
-  background: var(--surface-sunken);
 }
 .molecule-row[data-selected='true'] {
   background: #d9e5f7;

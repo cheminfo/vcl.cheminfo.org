@@ -5,6 +5,7 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 import type { CSSProperties, ReactElement } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Structure } from 'react-cheminfo/structure';
+import { ClickToCopy } from 'react-cheminfo/ui';
 import { MF } from 'react-mf';
 
 import { HelpTooltip } from '../../components/shared/HelpTooltip.tsx';
@@ -69,7 +70,9 @@ export function MoleculeTable(): ReactElement {
     }
   }, [plotHoverIdCode, indexByIdCode, virtualizer]);
 
-  const gridTemplateColumns = `56px 190px 150px repeat(${columns.length}, minmax(84px, 1fr))`;
+  // The structure column is the 180px drawing plus the gutter its copy glyph
+  // sits in, so the glyph never lands on the molecule.
+  const gridTemplateColumns = `56px 202px 150px repeat(${columns.length}, minmax(84px, 1fr))`;
 
   if (rows.length === 0) {
     return (
@@ -127,9 +130,8 @@ export function MoleculeTable(): ReactElement {
           const molecule = rows[item.index];
           if (molecule === undefined) return null;
           return (
-            <button
+            <div
               key={item.key}
-              type="button"
               className="molecule-row"
               data-selected={
                 molecule.idCode === selectedIdCode ? 'true' : undefined
@@ -150,15 +152,42 @@ export function MoleculeTable(): ReactElement {
                 hoverMoleculeInTable(molecule.idCode);
               }}
             >
-              <span className={Classes.TEXT_MUTED}>{item.index + 1}</span>
-              <Structure idCode={molecule.idCode} width={180} height={80} />
-              <MF mf={molecule.mf} />
-              {columns.map((key) => (
-                <span key={key} className="molecule-cell-number">
-                  {molecule[key].toFixed(NUMERIC_PROPERTY_BY_KEY[key].decimals)}
-                </span>
-              ))}
-            </button>
+              <button
+                type="button"
+                className={`${Classes.TEXT_MUTED} molecule-row__index`}
+                aria-label={`Highlight molecule ${item.index + 1} in the plot`}
+                onClick={() => {
+                  selectMolecule(molecule.idCode);
+                }}
+              >
+                {item.index + 1}
+              </button>
+              <ClickToCopy as="div" value={molecule.smiles} label="SMILES">
+                <Structure idCode={molecule.idCode} width={180} height={80} />
+              </ClickToCopy>
+              <ClickToCopy
+                as="div"
+                value={molecule.mf}
+                label="molecular formula"
+              >
+                <MF mf={molecule.mf} />
+              </ClickToCopy>
+              {columns.map((key) => {
+                const property = NUMERIC_PROPERTY_BY_KEY[key];
+                const text = molecule[key].toFixed(property.decimals);
+                return (
+                  <ClickToCopy
+                    key={key}
+                    as="div"
+                    className="molecule-cell-number"
+                    value={text}
+                    label={property.name}
+                  >
+                    {text}
+                  </ClickToCopy>
+                );
+              })}
+            </div>
           );
         })}
       </div>

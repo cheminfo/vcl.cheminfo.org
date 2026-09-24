@@ -11,6 +11,8 @@
 import type { Locator, Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 
+import { generate, loadExample } from './builder.ts';
+
 /** How high a band is brushed off the top of an axis, in pixels. */
 const BRUSH_HEIGHT = 12;
 
@@ -113,34 +115,6 @@ test('brushing the top of the mass axis keeps the heaviest molecule alone', asyn
   await expect(page.locator('.molecule-row')).toHaveCount(14);
   await expect(toolbar).not.toContainText('selected');
 });
-
-/**
- * Open the Examples tab and load one of its ready-made libraries, which lands
- * on the builder with that core and those fragments.
- * @param page - The page under test.
- * @param title - Heading of the example card.
- */
-async function loadExample(page: Page, title: string): Promise<void> {
-  await page.goto('/examples');
-  await page
-    .locator('.example-card')
-    .filter({ hasText: title })
-    .getByRole('button', { name: 'Load this library' })
-    .click();
-  await expect(page.locator('.generate-panel')).toBeVisible();
-}
-
-/**
- * Enumerate the library currently in the builder, and wait for the run to
- * report what it produced.
- * @param page - The page under test.
- */
-async function generate(page: Page): Promise<void> {
-  await page.getByRole('button', { name: 'Generate library' }).click();
-  await expect(page.locator('.generate-outcome')).toBeVisible({
-    timeout: 60_000,
-  });
-}
 
 /**
  * The mass of the molecule on the first row of the table.

@@ -72,7 +72,7 @@ export const FRAGMENT_REMOVE_HELP: HelpContent = {
 export const FRAGMENT_SMILES_HELP: HelpContent = {
   title: 'Fragment SMILES',
   description:
-    'How the enumerator sees this fragment: its attachment point is the [R] token, replaced by the bond to the core.',
+    'How the enumerator sees this fragment: its attachment point is the [R] token, replaced by the bond to the core. Click it to copy it.',
 };
 
 export const GENERATE_PANEL_HELP: HelpContent = {
@@ -221,19 +221,19 @@ export function generateHelp(
 export const TABLE_INDEX_HELP: HelpContent = {
   title: 'Row number',
   description:
-    'Position in the table as it is currently sorted, not an identifier of the molecule.',
+    'Position in the table as it is currently sorted, not an identifier of the molecule. Click it to keep that molecule highlighted in the plot.',
 };
 
 export const TABLE_STRUCTURE_HELP: HelpContent = {
   title: 'Structure',
   description:
-    'Drawn from the canonical ID code of the molecule. Click a row to keep that molecule selected.',
+    'Drawn from the canonical ID code of the molecule. Click it to copy the SMILES of that molecule.',
 };
 
 export const TABLE_FORMULA_HELP: HelpContent = {
   title: 'Molecular formula',
   description:
-    'Atom counts of the whole molecule, core and fragments together.',
+    'Atom counts of the whole molecule, core and fragments together. Click it to copy it.',
 };
 
 /**

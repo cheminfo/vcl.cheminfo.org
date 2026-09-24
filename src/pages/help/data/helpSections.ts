@@ -50,7 +50,7 @@ export const HELP_SECTIONS = [
     paragraphs: [
       'The library is drawn as a [[parallel coordinates]] plot: one vertical axis per property, one polyline per molecule. Bundles of parallel segments are correlated properties; segments that cross between two axes are the opposite.',
       '[[Brushing]] an axis, that is dragging along it, keeps only the molecules whose value falls inside the interval. Brushes on several axes combine, so three drags are enough to isolate the light, soluble and rigid corner of a library. Drag the brush away to remove it.',
-      'The table under the plot lists exactly the molecules the brushes keep and scrolls through thousands of rows without slowing down. Selecting a row shows that molecule on its own, with its formula and every predicted value.',
+      'The table under the plot lists exactly the molecules the brushes keep and scrolls through thousands of rows without slowing down. Clicking a formula or a value copies it, and clicking a drawing copies the SMILES of that molecule; clicking the row number keeps that molecule highlighted in the plot above.',
     ],
   },
   {

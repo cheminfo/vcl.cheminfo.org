@@ -90,6 +90,8 @@ export interface NumericProperty {
   key: NumericPropertyKey;
   /** Short label used on axes and column headers. */
   label: string;
+  /** What the value is, spelled out: `Copy the molecular weight (92.14)`. */
+  name: string;
   /** Number of decimals used when the value is displayed. */
   decimals: number;
   /** One sentence shown in the help tooltip. */
@@ -100,48 +102,56 @@ export const NUMERIC_PROPERTIES: readonly NumericProperty[] = [
   {
     key: 'mw',
     label: 'MW',
+    name: 'molecular weight',
     decimals: 2,
     help: 'Relative molecular weight, in g/mol. Lipinski asks for at most 500.',
   },
   {
     key: 'logP',
     label: 'logP',
+    name: 'logP',
     decimals: 2,
     help: 'Predicted octanol/water partition coefficient: how lipophilic the molecule is. Lipinski asks for at most 5.',
   },
   {
     key: 'logS',
     label: 'logS',
+    name: 'logS',
     decimals: 2,
     help: 'Predicted aqueous solubility, as the decimal logarithm of the molar solubility. Higher is more soluble.',
   },
   {
     key: 'psa',
     label: 'PSA',
+    name: 'polar surface area',
     decimals: 2,
     help: 'Topological polar surface area, in square angstroms. Above roughly 140 the molecule rarely crosses membranes.',
   },
   {
     key: 'nbHAcceptor',
     label: 'H acceptors',
+    name: 'hydrogen bond acceptor count',
     decimals: 0,
     help: 'Number of hydrogen bond acceptors. Lipinski asks for at most 10.',
   },
   {
     key: 'nbHDonor',
     label: 'H donors',
+    name: 'hydrogen bond donor count',
     decimals: 0,
     help: 'Number of hydrogen bond donors. Lipinski asks for at most 5.',
   },
   {
     key: 'nbRotatable',
     label: 'Rotatable',
+    name: 'rotatable bond count',
     decimals: 0,
     help: 'Number of freely rotatable bonds, a proxy for conformational flexibility.',
   },
   {
     key: 'nbStereoCenter',
     label: 'Stereocenters',
+    name: 'stereocenter count',
     decimals: 0,
     help: 'Number of stereo centers. Each one doubles the number of stereoisomers to synthesise.',
   },

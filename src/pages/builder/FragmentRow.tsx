@@ -2,10 +2,10 @@ import { EditableText, Icon, Switch } from '@blueprintjs/core';
 import { useSignals } from '@preact/signals-react/runtime';
 import type { MouseEvent, ReactElement } from 'react';
 import { Structure } from 'react-cheminfo/structure';
+import { onActivateKey } from 'react-cheminfo/ui';
 import { Button } from 'react-science/ui';
 
 import { HelpTooltip } from '../../components/shared/HelpTooltip.tsx';
-import { isActivationKey } from '../../components/shared/activation.ts';
 import { helpTooltip } from '../../components/shared/helpContent.tsx';
 import {
   preferences,
@@ -66,12 +66,10 @@ export function FragmentRow(props: FragmentRowProps): ReactElement {
         selectFragment(fragment.id);
         onEdit();
       }}
-      onKeyDown={(event) => {
-        if (!isActivationKey(event)) return;
-        event.preventDefault();
+      onKeyDown={onActivateKey(() => {
         selectFragment(fragment.id);
         onEdit();
-      }}
+      })}
     >
       <span className="fragment-row__index">{position}</span>
       <div className="fragment-row__thumbnail">
