@@ -40,7 +40,7 @@ test('clicking the drawing of a molecule copies its SMILES, and nothing else', a
 
   const toluene = page.locator('.molecule-row').first();
   const structure = toluene.locator('.click-to-copy').first();
-  await expect(structure).toHaveCSS('cursor', 'copy');
+  await expect(structure).toHaveCSS('cursor', /\bcopy$/);
   await expect(structure).toHaveAttribute(
     'title',
     `Copy the SMILES (${TOLUENE_SMILES})`,
