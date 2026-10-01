@@ -2,6 +2,7 @@ import react from '@vitejs/plugin-react';
 import { cheminfoBuildInfo, cheminfoPrerender } from 'react-cheminfo/vite';
 import { defineConfig } from 'vite';
 
+import { pageContent } from './src/state/content.ts';
 import { NOSCRIPT_ROUTES, PAGE_ROUTES } from './src/state/routes.ts';
 import { configuredSiteUrl } from './src/state/sitePath.ts';
 
@@ -32,6 +33,9 @@ export default defineConfig({
     cheminfoPrerender({
       site: 'vcl',
       routes: PAGE_ROUTES,
+      // What each address says for itself: without it every address ships the
+      // same body, this site's menu, and a search engine folds them into one.
+      content: pageContent,
       // The whole published address, mount path included: it is what the
       // canonical link, the social card and the sitemap are written from.
       origin: siteUrl,
