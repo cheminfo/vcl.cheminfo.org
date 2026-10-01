@@ -39,7 +39,7 @@ export const PAGE_ROUTES: readonly RouteMeta[] = [
     path: '/about',
     title: 'About — what it is built on, and how to cite it',
     description:
-      'What this virtual combinatorial library builder is, the paper its approach comes from, the open work it runs on, and where to report a problem.',
+      'What this virtual combinatorial library builder is, the paper its approach comes from, the work it runs on, and how to cite it.',
   },
 ];
 
@@ -48,7 +48,7 @@ const NOSCRIPT_LABELS: Record<string, Pick<NoscriptRoute, 'short' | 'note'>> = {
   '/': { short: 'Builder', note: 'draw a core and enumerate the library' },
   '/examples': { short: 'Examples', note: 'ready-made libraries' },
   '/help': { short: 'Help', note: 'the manual and the glossary' },
-  '/about': { short: 'About', note: 'credits, citation and licence' },
+  '/about': { short: 'About', note: 'credits and citation' },
 };
 
 /**
