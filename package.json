@@ -1,6 +1,6 @@
 {
   "name": "vcl",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Virtual combinatorial library — build a virtual library from a core structure with R groups and a set of fragments",
   "type": "module",
   "private": true,
