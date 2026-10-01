@@ -125,7 +125,7 @@ export const GLOSSARY: Glossary = {
   openchemlib: {
     title: 'OpenChemLib',
     summary:
-      'The open source cheminformatics toolkit that draws the structures, enumerates the combinations and predicts the properties. It runs entirely in the browser, compiled to JavaScript.',
+      'The cheminformatics toolkit that draws the structures, enumerates the combinations and predicts the properties. It runs entirely in the browser, compiled to JavaScript.',
     examples: [{ code: 'Molecule.fromSmiles(s)', note: 'Its entry point.' }],
   },
 };
